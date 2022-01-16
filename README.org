@@ -1,0 +1,34 @@
+#+TITLE: FurDB
+
+* my_database (Directory)
+** fur.json (File)
+#+begin_src json
+  {
+    "name": "My Database",
+    "description": "Sample database for testing",
+  }
+#+end_src
+** table_1 (Directory)
+*** schema.json (File)
+#+begin_src json
+  {
+    "name": "Table 1",
+    "description": "Sample table for testing",
+    "schema": [
+      {
+        "name": "Column 1",
+        "description": "Sample column 1 for testing",
+        "size": 4,
+      },
+      {
+        "name": "Column 2",
+        "description": "Another sample column 2 for testing",
+        "size": 20,
+      },
+    ],
+  }
+#+end_src
+*** data.fur
+00101011 11001010 01001011 10010101 00101101 10110101
+^   ^                      ^   ^
+c1  c2                     c1  c2

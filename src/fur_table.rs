@@ -1,0 +1,3 @@
+struct FurTable {
+    directory: String,
+}

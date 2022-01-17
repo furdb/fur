@@ -1,16 +1,16 @@
-use std::fs;
+use std::env;
 
-static DB_INFO_FILE_NAME: &str = "fur.json";
+mod fur_database;
+use fur_database::FurDatabase;
 
 fn main() {
-    let db_path: &str = "E:\\Home\\Repositories\\fur\\TestDB";
+    let args: Vec<String> = env::args().collect();
+    println!("{:?}", args);
 
-    let db_info = db_path.to_string() + &"\\".to_string() + DB_INFO_FILE_NAME;
+    let db_path: String = "E:\\Home\\Repositories\\fur\\TestDB".to_string();
 
-    let contents = fs::read_to_string(db_info).expect("Something went wrong reading the file");
+    let db: FurDatabase = FurDatabase::new(db_path);
 
-    let json: serde_json::Value =
-        serde_json::from_str(&contents).expect("JSON was not well-formatted");
-
-    println!("{0}", json);
+    println!("{0}", FurDatabase::get_name(&db));
+    println!("{0}", FurDatabase::get_description(&db));
 }

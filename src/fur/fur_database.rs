@@ -1,28 +1,32 @@
 use std::fs;
+use std::path::PathBuf;
 
 pub struct FurDB {
-    directory: String,
+    dir: PathBuf,
 }
 
 impl FurDB {
-    pub fn new(directory: &str) -> FurDB {
-        FurDB {
-            directory: directory.to_string(),
+    pub fn new(dir: PathBuf) -> Result<FurDB, &'static str> {
+        // TODO: Handle the errors
+        if false {
+            return Err("Error occoured");
         }
+
+        Ok(FurDB { dir: dir })
     }
 
-    pub fn get_name(database: &FurDB) -> String {
-        Self::get_info(database, "name")
+    pub fn get_name(db: &FurDB) -> String {
+        Self::get_info(db, "name")
     }
 
-    pub fn get_description(database: &FurDB) -> String {
-        Self::get_info(database, "description")
+    pub fn get_description(db: &FurDB) -> String {
+        Self::get_info(db, "description")
     }
 
-    pub fn get_tables(database: &FurDB) -> Vec<String> {
+    pub fn get_tables(db: &FurDB) -> Vec<String> {
         let mut tables = Vec::new();
 
-        for file in fs::read_dir(&database.directory).unwrap() {
+        for file in fs::read_dir(&db.dir).unwrap() {
             let file_name = file.unwrap();
             let metadata = fs::metadata(&file_name.path());
 
@@ -34,12 +38,13 @@ impl FurDB {
         tables
     }
 
-    fn get_info_file_path(database: &FurDB) -> String {
-        database.directory.clone() + &"\\fur.json"
+    fn get_info_file_path(db: &FurDB) -> String {
+        db.dir.as_path().display().to_string() + "\\fur.json"
     }
 
-    fn get_info(database: &FurDB, property: &str) -> String {
-        let db_info_path = Self::get_info_file_path(database);
+    fn get_info(db: &FurDB, property: &str) -> String {
+        let db_info_path = Self::get_info_file_path(db);
+
         let db_info_contents_raw =
             fs::read_to_string(&db_info_path).expect("Something went wrong while reading the file");
 

@@ -1,3 +1,3 @@
 struct FurTable {
-    directory: String,
+    dir: PathBuf,
 }

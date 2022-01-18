@@ -12,7 +12,7 @@ fn main() {
     let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDB");
 
     let db = FurDB::new(db_path).unwrap_or_else(|err| {
-        println!("Error accessing a new database: {0}", err);
+        println!("Error accessing database: {0}", err);
         process::exit(1);
     });
 

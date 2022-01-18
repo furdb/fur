@@ -38,21 +38,24 @@ impl FurDB {
         tables
     }
 
-    fn get_info_file_path(db: &FurDB) -> String {
-        db.dir.as_path().display().to_string() + "\\fur.json"
+    fn get_info_file_path(db: &FurDB) -> PathBuf {
+        let mut db_info_file_path = db.dir.clone();
+        db_info_file_path.push("fur.json");
+
+        db_info_file_path
     }
 
     fn get_info(db: &FurDB, property: &str) -> String {
-        let db_info_path = Self::get_info_file_path(db);
+        let db_info_file_path = Self::get_info_file_path(db);
 
         let db_info_contents_raw =
-            fs::read_to_string(&db_info_path).expect("Something went wrong while reading the file");
+            fs::read_to_string(&db_info_file_path).unwrap_or_else(|err| err.to_string());
 
-        let db_info_contents: serde_json::Value = serde_json::from_str(&db_info_contents_raw)
-            .expect("Something went wrong while parsing JSON");
+        let db_info_contents: serde_json::Value =
+            serde_json::from_str(&db_info_contents_raw).expect("");
 
-        let property = db_info_contents.get(property).unwrap().to_string();
+        let value = db_info_contents.get(property).unwrap().to_string();
 
-        property
+        value
     }
 }

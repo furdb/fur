@@ -7,7 +7,7 @@ pub struct FurDB {
 
 impl FurDB {
     pub fn new(dir: PathBuf) -> Result<FurDB, &'static str> {
-        // TODO: Handle the errors
+        // TODO: Handle the errors here
         if false {
             return Err("Error occoured");
         }

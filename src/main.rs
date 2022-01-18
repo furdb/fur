@@ -1,13 +1,14 @@
-use std::env;
 use std::path::PathBuf;
 use std::process;
 
 mod fur;
 use fur::FurDB;
 
+// mod cli;
+// use clap::Parser;
+
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    println!("Arguments: {:?}", args);
+    // let _args = cli::Args::parse();
 
     let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDB");
 

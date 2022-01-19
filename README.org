@@ -1,5 +1,9 @@
 #+TITLE: FurDB
 
+A small, space-efficient Database Management System.
+
+This README is (clearly) a work in progress. Actually this isn't even a README right now, I'm just writing down a map.
+
 * my_database (Directory)
 ** fur.json (File)
 #+begin_src json
@@ -29,6 +33,8 @@
   }
 #+end_src
 *** data.fur
+#+begin_src
 00101011 11001010 01001011 10010101 00101101 10110101
 ^   ^                      ^   ^
 c1  c2                     c1  c2
+#+end_src

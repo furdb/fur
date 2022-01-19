@@ -1,5 +1,4 @@
 use std::path::PathBuf;
-use std::process;
 
 mod fur;
 use fur::FurDB;
@@ -10,14 +9,14 @@ use fur::FurDB;
 fn main() {
     // let _args = cli::Args::parse();
 
+    // Path to the DB
     let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDB");
 
-    let db = FurDB::new(db_path).unwrap_or_else(|err| {
-        println!("Error accessing database: {0}", err);
-        process::exit(1);
-    });
+    // DB object
+    let db = FurDB::new(db_path);
 
-    println!("Name: {0}", FurDB::get_name(&db));
-    println!("Description: {0}", FurDB::get_description(&db));
-    println!("Tables: {:?}", FurDB::get_tables(&db));
+    // Get DB info
+    println!("Name: {0}", db.get_name().unwrap());
+    println!("Description: {0}", db.get_description().unwrap());
+    println!("Tables: {:?}", db.get_tables());
 }

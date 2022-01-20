@@ -1,27 +1,28 @@
 use std::path::PathBuf;
 
 mod fur;
-use fur::FurDB;
+use fur::{FurDB, FurDBInfo};
 
 fn main() -> std::io::Result<()> {
-    // Set the path to the DB
-    let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\TestDB2");
+    let db_path1 = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\TestDB");
+    let db_path2 = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\TestDB2");
 
-    // Create the DB object
-    let db = FurDB::new(db_path);
+    let db1 = FurDB::new(&db_path1, None)?;
 
-    // Create the DB structure
-    // Note: The DB should NOT already exist. Overwrites the DB info if the info file exists
-    db.create(
-        String::from("Another DB of mine!"),
-        String::from("Another sample description"),
-    )?;
+    let db2_info = FurDBInfo::new(String::from("Name"), String::from("Description"));
+    let db2 = FurDB::new(&db_path2, Some(db2_info))?;
 
-    // Get the DB info
-    // Note: DB should already exist
-    println!("Name: {0}", db.get_name().unwrap());
-    println!("Description: {0}", db.get_description().unwrap());
-    println!("Tables: {:?}", db.get_tables().unwrap());
+    let db1_info = db1.get_info()?;
+    let db1_tables = db1.get_tables()?;
+
+    let db2_info = db2.get_info()?;
+    let db2_tables = db2.get_tables()?;
+
+    println!("DB1: {:?}", db1_info);
+    println!("DB1 Tables: {:?}", db1_tables);
+
+    println!("DB1: {:?}", db2_info);
+    println!("DB2 Tables: {:?}", db2_tables);
 
     Ok(())
 }

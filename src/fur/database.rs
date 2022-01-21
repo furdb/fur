@@ -1,20 +1,11 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-pub struct FurDB {
-    dir: PathBuf,
-}
+use super::FurDBInfo;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct FurDBInfo {
-    name: String,
-    description: String,
-}
-
-impl FurDBInfo {
-    pub fn new(name: String, description: String) -> FurDBInfo {
-        FurDBInfo { name, description }
-    }
+pub struct FurDB {
+    dir: PathBuf,
 }
 
 impl FurDB {
@@ -66,7 +57,6 @@ impl FurDB {
     }
 }
 
-// Utils
 impl FurDB {
     fn get_info_file_path(dir: &PathBuf) -> PathBuf {
         let mut db_info_file_path = dir.clone();

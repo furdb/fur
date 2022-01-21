@@ -1,3 +1,0 @@
-struct FurTable {
-    dir: PathBuf,
-}

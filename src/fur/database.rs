@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-use super::FurDBInfo;
+use super::{FurDBInfo, FurTable};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FurDB {
@@ -29,7 +29,7 @@ impl FurDB {
         })
     }
 
-    pub fn get_tables(&self) -> std::io::Result<Vec<String>> {
+    pub fn get_all_tables(&self) -> std::io::Result<Vec<String>> {
         let mut tables = Vec::new();
 
         for file in std::fs::read_dir(&self.dir)? {
@@ -42,6 +42,14 @@ impl FurDB {
         }
 
         Ok(tables)
+    }
+
+    pub fn get_table(&self, table_name: String) -> std::io::Result<FurTable> {
+        let mut table_dir_path = self.dir.clone();
+        table_dir_path.push(table_name);
+        let tb = FurTable::new(&table_dir_path, None)?;
+
+        Ok(tb)
     }
 
     pub fn get_info(&self) -> std::io::Result<FurDBInfo> {

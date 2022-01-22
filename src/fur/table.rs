@@ -27,9 +27,28 @@ impl FurTable {
             std::fs::write(table_info_file_path, table_info_contents)?;
         }
 
+        let data_file_path = Self::get_data_file_path(dir);
+
+        if !data_file_path.exists() {
+            std::fs::write(data_file_path, "")?;
+        }
+
         Ok(FurTable {
             dir: dir.to_path_buf(),
         })
+    }
+
+    pub fn get_info(&self) -> std::io::Result<FurTableInfo> {
+        let table_info_file_path = Self::get_info_file_path(&self.dir);
+
+        let table_info_contents_raw = std::fs::read_to_string(&table_info_file_path)?;
+
+        let table_info_contents: serde_json::Value =
+            serde_json::from_str(&table_info_contents_raw)?;
+
+        let value = serde_json::from_value(table_info_contents)?;
+
+        Ok(value)
     }
 }
 
@@ -39,5 +58,12 @@ impl FurTable {
         table_info_file_path.push("fur_table.json");
 
         table_info_file_path
+    }
+
+    fn get_data_file_path(dir: &PathBuf) -> PathBuf {
+        let mut data_file_path = dir.clone();
+        data_file_path.push("data.fur");
+
+        data_file_path
     }
 }

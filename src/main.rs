@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
     println!("DB1 Tables: {:?}", db1_tables);
 
     let tb1_name = String::from("test_table");
-    let tb1 = db1.get_table(tb1_name)?;
+    let tb1 = db1.get_table(tb1_name, None)?;
     let tb1_info = tb1.get_info()?;
 
     println!("{:?}", tb1_info);

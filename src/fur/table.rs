@@ -21,7 +21,7 @@ impl FurTable {
 
         if !table_info_file_path.exists() {
             let table_info_contents = serde_json::to_string(
-                &table_info.unwrap_or(FurTableInfo::new(String::from(""), String::from(""), None)),
+                &table_info.unwrap_or(FurTableInfo::new(String::from(""), None, None)),
             )?;
 
             std::fs::write(table_info_file_path, table_info_contents)?;

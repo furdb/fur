@@ -10,10 +10,14 @@ pub struct FurTableInfo {
 }
 
 impl FurTableInfo {
-    pub fn new(name: String, description: String, columns: Option<Vec<FurColumn>>) -> FurTableInfo {
+    pub fn new(
+        name: String,
+        description: Option<String>,
+        columns: Option<Vec<FurColumn>>,
+    ) -> FurTableInfo {
         FurTableInfo {
             name,
-            description,
+            description: description.unwrap_or(String::from("")),
             columns: columns.unwrap_or(Vec::new()),
         }
     }

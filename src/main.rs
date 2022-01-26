@@ -3,22 +3,46 @@ use std::path::PathBuf;
 mod fur;
 use fur::FurDB;
 
+mod models;
+use models::Person;
+
+use crate::fur::{FurDBInfo, FurTableInfo};
+
 fn main() -> std::io::Result<()> {
-    let db_path1 = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\TestDB");
-    let db1 = FurDB::new(&db_path1, None)?;
-    let db1_info = db1.get_info()?;
+    let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
+    let db = FurDB::new(
+        &db_path,
+        Some(FurDBInfo::new(
+            String::from("Person Data"),
+            Some(String::from(
+                "Database for storing the data regarding various people.",
+            )),
+        )),
+    )?;
 
-    println!("DB1: {:?}", db1_info);
+    let db1_info = db.get_info()?;
 
-    let db1_tables = db1.get_all_tables()?;
+    println!("Database Info: {:?}", db1_info);
 
-    println!("DB1 Tables: {:?}", db1_tables);
+    let db_tables = db.get_all_tables()?;
 
-    let tb1_name = String::from("test_table");
-    let tb1 = db1.get_table(tb1_name, None)?;
-    let tb1_info = tb1.get_info()?;
+    println!("Database Tables: {:?}", db_tables);
 
-    println!("{:?}", tb1_info);
+    let tb_name = String::from("PersonInfo");
+    let tb = db.get_table(
+        tb_name,
+        Some(FurTableInfo::new(
+            String::from("Person Info"),
+            Some(String::from(
+                "Information regarding some people and their favourite numbers!",
+            )),
+            Some(Vec::new()),
+        )),
+    )?;
+
+    let tb_info = tb.get_info()?;
+
+    println!("{:?}", tb_info);
 
     Ok(())
 }

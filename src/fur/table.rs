@@ -20,8 +20,15 @@ impl FurTable {
         let table_info_file_path = Self::get_info_file_path(dir);
 
         if !table_info_file_path.exists() {
+            let table_name = dir
+                .file_name()
+                .unwrap_or(std::ffi::OsStr::new(""))
+                .to_str()
+                .unwrap_or("")
+                .to_string();
+
             let table_info_contents = serde_json::to_string(
-                &table_info.unwrap_or(FurTableInfo::new(String::from(""), None, None)),
+                &table_info.unwrap_or(FurTableInfo::new(table_name, None, None)),
             )?;
 
             std::fs::write(table_info_file_path, table_info_contents)?;

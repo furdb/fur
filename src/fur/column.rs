@@ -9,3 +9,19 @@ pub struct FurColumn {
     size: u128,
     data_type: FurDataType,
 }
+
+impl FurColumn {
+    pub fn new(
+        name: String,
+        description: Option<String>,
+        size: u128,
+        data_type: &FurDataType,
+    ) -> FurColumn {
+        FurColumn {
+            name,
+            description: description.unwrap_or(String::from("")),
+            size,
+            data_type: FurDataType::clone(data_type),
+        }
+    }
+}

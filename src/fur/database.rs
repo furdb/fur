@@ -9,7 +9,7 @@ pub struct FurDB {
 }
 
 impl FurDB {
-    pub fn new<'a>(dir: &'a PathBuf, db_info: Option<FurDBInfo>) -> std::io::Result<FurDB> {
+    pub fn new<'a, 'b>(dir: &'a PathBuf, db_info: Option<&'b FurDBInfo>) -> std::io::Result<FurDB> {
         if !dir.exists() {
             std::fs::create_dir(dir)?;
         }
@@ -25,7 +25,7 @@ impl FurDB {
                 .to_string();
 
             let db_info_contents =
-                serde_json::to_string(&db_info.unwrap_or(FurDBInfo::new(db_name, None)))?;
+                serde_json::to_string(&db_info.unwrap_or(&FurDBInfo::new(db_name, None)))?;
 
             std::fs::write(db_info_file_path, db_info_contents)?;
         }

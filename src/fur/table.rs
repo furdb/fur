@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 
 use super::table_info::FurTableInfo;
 
@@ -56,6 +56,22 @@ impl FurTable {
         let value = serde_json::from_value(table_info_contents)?;
 
         Ok(value)
+    }
+}
+
+impl FurTable {
+    pub fn add(&self, data: HashMap<&str, &str>) -> std::io::Result<()> {
+        let table_info = self.get_info()?;
+
+        for column in table_info.get_columns() {
+            let value = data.get(&column.get_name().as_str()).unwrap_or(&"");
+
+            // TODO
+
+            println!("{} {}", &column.get_name(), value);
+        }
+
+        Ok(())
     }
 }
 

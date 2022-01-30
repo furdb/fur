@@ -24,4 +24,8 @@ impl FurColumn {
             data_type: FurDataType::clone(data_type),
         }
     }
+
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
 }

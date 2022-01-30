@@ -21,4 +21,8 @@ impl FurTableInfo {
             columns: columns.unwrap_or(Vec::new()),
         }
     }
+
+    pub fn get_columns(&self) -> &Vec<FurColumn> {
+        &self.columns
+    }
 }

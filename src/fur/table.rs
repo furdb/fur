@@ -1,18 +1,25 @@
+use bit_vec::BitVec;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
 
 use super::table_info::FurTableInfo;
 
+use serde_closure::{traits::Fn, Fn};
+
 #[derive(Debug, Serialize, Deserialize)]
-pub struct FurTable {
-    dir: PathBuf,
+#[serde(bound(
+    serialize = "&'a (dyn Fn<String, Output = BitVec> + 'a): Serialize",
+    deserialize = "&'a (dyn Fn<String, Output = BitVec> + 'a): Deserialize<'de>",
+))]
+pub struct FurTable<'a> {
+    dir: &'a PathBuf,
 }
 
-impl FurTable {
+impl FurTable<'_> {
     pub fn new<'a>(
         dir: &'a PathBuf,
         table_info: Option<FurTableInfo>,
-    ) -> std::io::Result<FurTable> {
+    ) -> std::io::Result<FurTable<'a>> {
         if !dir.exists() {
             std::fs::create_dir(dir)?;
         }
@@ -27,9 +34,9 @@ impl FurTable {
                 .unwrap_or("")
                 .to_string();
 
-            let table_info_contents = serde_json::to_string(
-                &table_info.unwrap_or(FurTableInfo::new(table_name, None, None)),
-            )?;
+            let table_info = &table_info.unwrap_or(FurTableInfo::new(table_name, None, None));
+
+            let table_info_contents = serde_json::to_string(table_info)?;
 
             std::fs::write(table_info_file_path, table_info_contents)?;
         }
@@ -41,7 +48,7 @@ impl FurTable {
         }
 
         Ok(FurTable {
-            dir: dir.to_path_buf(),
+            dir: &dir.to_path_buf(),
         })
     }
 
@@ -59,14 +66,18 @@ impl FurTable {
     }
 }
 
-impl FurTable {
+impl FurTable<'_> {
     pub fn add(&self, data: HashMap<&str, &str>) -> std::io::Result<()> {
         let table_info = self.get_info()?;
+
+        let raw_binary = BitVec::new();
 
         for column in table_info.get_columns() {
             let value = data.get(&column.get_name().as_str()).unwrap_or(&"");
 
-            // TODO
+            let encoder = column.get_data_type().get_encoder();
+
+            //
 
             println!("{} {}", &column.get_name(), value);
         }
@@ -75,7 +86,7 @@ impl FurTable {
     }
 }
 
-impl FurTable {
+impl FurTable<'_> {
     fn get_info_file_path(dir: &PathBuf) -> PathBuf {
         let mut table_info_file_path = dir.clone();
         table_info_file_path.push("fur_table.json");

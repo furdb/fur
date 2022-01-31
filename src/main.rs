@@ -1,7 +1,10 @@
+use bit_vec::BitVec;
 use std::{collections::HashMap, path::PathBuf};
 
 mod fur;
 use crate::fur::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTableInfo};
+
+use serde_closure::{traits::Fn, Fn};
 
 fn main() -> std::io::Result<()> {
     let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
@@ -21,11 +24,15 @@ fn main() -> std::io::Result<()> {
     let db_tables = db.get_all_tables()?;
     println!("Database Tables: {:?}", db_tables);
 
-    let integer_data_type = FurDataType::new(
-        String::from("Integer"),
-        &PathBuf::from(""),
-        &PathBuf::from(""),
-    );
+    let encoder = Fn!(|data: String| {
+        let res = BitVec::new();
+
+        //
+
+        res
+    });
+
+    let integer_data_type = FurDataType::new(String::from("Integer"), encoder, &PathBuf::from(""));
 
     let person_id_column = FurColumn::new(
         String::from("id"),
@@ -52,7 +59,7 @@ fn main() -> std::io::Result<()> {
     let tb = db.get_table(table_name, Some(table_info))?;
 
     let tb_info = tb.get_info()?;
-    println!("{:?}", tb_info);
+    // println!("{:?}", tb_info);
 
     let p1 = HashMap::from([("id", "7"), ("favourite_number", "18")]);
 

@@ -1,24 +1,18 @@
-use std::path::PathBuf;
-
+use super::Converter;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FurDataType {
     name: String,
-    encoder: PathBuf,
-    decoder: PathBuf,
+    converter: Converter,
 }
 
 impl FurDataType {
-    pub fn new(name: String, encoder: PathBuf, decoder: PathBuf) -> FurDataType {
-        FurDataType {
-            name,
-            encoder,
-            decoder,
-        }
+    pub fn new(name: String, converter: Converter) -> FurDataType {
+        FurDataType { name, converter }
     }
 
-    pub fn get_encoder(&self) -> PathBuf {
-        self.encoder.clone()
+    pub fn get_converter(&self) -> Converter {
+        self.converter.clone()
     }
 }

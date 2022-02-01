@@ -1,20 +1,30 @@
 use std::{collections::HashMap, io::Result, path::PathBuf};
 
 mod fur;
-use fur::FurTable;
+use fur::{Converter, FurTable};
 
 use crate::fur::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTableInfo};
 
 fn main() -> Result<()> {
-    let db = create_db()?;
+    // let db = create_db()?;
 
-    check_db(db.clone())?;
+    // check_db(db.clone())?;
 
-    let tb = create_table(db.clone())?;
+    // let tb = create_table(db.clone())?;
 
-    check_table(tb.clone())?;
+    // check_table(tb.clone())?;
 
-    create_data(tb.clone())?;
+    // create_data(tb.clone())?;
+
+    converter_test();
+
+    Ok(())
+}
+
+fn converter_test() -> Result<()> {
+    let converter = Converter::new(PathBuf::new(), PathBuf::new());
+
+    converter.encode(String::from("9"));
 
     Ok(())
 }
@@ -71,16 +81,25 @@ fn create_columns() -> (FurColumn, FurColumn) {
 }
 
 fn create_data_type() -> FurDataType {
-    let encoder = PathBuf::from("");
-    let decoder = PathBuf::from("");
+    let converter = create_converter();
 
-    let integer_data_type = FurDataType::new(String::from("Integer"), encoder, decoder);
+    let integer_data_type = FurDataType::new(String::from("Integer"), converter.clone());
 
     integer_data_type
 }
 
+fn create_converter() -> Converter {
+    let encoder = PathBuf::from("");
+    let decoder = PathBuf::from("");
+
+    Converter::new(encoder, decoder)
+}
+
 fn create_data(tb: FurTable) -> Result<()> {
-    let p1_info = HashMap::from([("id", "7"), ("favourite_number", "18")]);
+    let p1_info = HashMap::from([
+        (String::from("id"), String::from("7")),
+        (String::from("favourite_number"), String::from("18")),
+    ]);
 
     tb.add(p1_info)?;
 

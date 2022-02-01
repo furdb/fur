@@ -1,8 +1,7 @@
+use super::table_info::FurTableInfo;
 use bit_vec::BitVec;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
-
-use super::table_info::FurTableInfo;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FurTable {
@@ -56,20 +55,27 @@ impl FurTable {
 }
 
 impl FurTable {
-    pub fn add(&self, data: HashMap<&str, &str>) -> std::io::Result<()> {
+    pub fn add(&self, data: HashMap<String, String>) -> std::io::Result<()> {
         let table_info = self.get_info()?;
 
-        let raw_binary = BitVec::new();
+        let mut raw_binary = BitVec::new();
 
         for column in table_info.get_columns() {
-            let value = data.get(column.get_name().as_str()).unwrap_or(&"");
+            let key = column.get_name();
+            let default_value = String::from("");
+            let value = data.get(&key).unwrap_or(&default_value);
 
-            let encoder = column.get_data_type().get_encoder();
+            let converter = column.get_data_type().get_converter();
 
-            //
+            let mut column_binary = converter.encode(value.clone());
+            raw_binary.append(&mut column_binary);
 
             println!("{} {}", &column.get_name(), value);
         }
+
+        println!("{:?}", raw_binary);
+
+        // --- Do something with raw_binary here ---
 
         Ok(())
     }

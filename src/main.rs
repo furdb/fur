@@ -16,7 +16,7 @@ fn main() -> Result<()> {
 
     // create_data(tb.clone())?;
 
-    converter_test();
+    converter_test()?;
 
     Ok(())
 }

@@ -35,6 +35,10 @@ impl Converter {
         binary
     }
 
+    pub fn resize(&self, bits: BitVec, size: u128) {
+        //
+    }
+
     pub fn decode(&self, bits: BitVec) -> String {
         String::from("")
     }

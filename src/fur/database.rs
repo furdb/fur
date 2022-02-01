@@ -3,15 +3,15 @@ use std::path::PathBuf;
 
 use super::{FurDBInfo, FurTable, FurTableInfo};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FurDB {
     dir: PathBuf,
 }
 
 impl FurDB {
-    pub fn new<'a, 'b>(dir: &'a PathBuf, db_info: Option<&'b FurDBInfo>) -> std::io::Result<FurDB> {
+    pub fn new(dir: PathBuf, db_info: Option<FurDBInfo>) -> std::io::Result<FurDB> {
         if !dir.exists() {
-            std::fs::create_dir(dir)?;
+            std::fs::create_dir(&dir)?;
         }
 
         let db_info_file_path = Self::get_info_file_path(&dir);
@@ -25,7 +25,7 @@ impl FurDB {
                 .to_string();
 
             let db_info_contents =
-                serde_json::to_string(&db_info.unwrap_or(&FurDBInfo::new(db_name, None)))?;
+                serde_json::to_string(&db_info.unwrap_or(FurDBInfo::new(db_name, None)))?;
 
             std::fs::write(db_info_file_path, db_info_contents)?;
         }
@@ -57,7 +57,7 @@ impl FurDB {
     ) -> std::io::Result<FurTable> {
         let mut table_dir_path = self.dir.clone();
         table_dir_path.push(table_name);
-        let tb = FurTable::new(&table_dir_path, table_info)?;
+        let tb = FurTable::new(table_dir_path, table_info)?;
 
         Ok(tb)
     }

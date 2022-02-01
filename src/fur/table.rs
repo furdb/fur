@@ -4,27 +4,18 @@ use std::{collections::HashMap, path::PathBuf};
 
 use super::table_info::FurTableInfo;
 
-use serde_closure::{traits::Fn, Fn};
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(bound(
-    serialize = "&'a (dyn Fn<String, Output = BitVec> + 'a): Serialize",
-    deserialize = "&'a (dyn Fn<String, Output = BitVec> + 'a): Deserialize<'de>",
-))]
-pub struct FurTable<'a> {
-    dir: &'a PathBuf,
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct FurTable {
+    dir: PathBuf,
 }
 
-impl FurTable<'_> {
-    pub fn new<'a>(
-        dir: &'a PathBuf,
-        table_info: Option<FurTableInfo>,
-    ) -> std::io::Result<FurTable<'a>> {
+impl FurTable {
+    pub fn new(dir: PathBuf, table_info: Option<FurTableInfo>) -> std::io::Result<FurTable> {
         if !dir.exists() {
-            std::fs::create_dir(dir)?;
+            std::fs::create_dir(&dir)?;
         }
 
-        let table_info_file_path = Self::get_info_file_path(dir);
+        let table_info_file_path = Self::get_info_file_path(&dir);
 
         if !table_info_file_path.exists() {
             let table_name = dir
@@ -41,15 +32,13 @@ impl FurTable<'_> {
             std::fs::write(table_info_file_path, table_info_contents)?;
         }
 
-        let data_file_path = Self::get_data_file_path(dir);
+        let data_file_path = Self::get_data_file_path(&dir);
 
         if !data_file_path.exists() {
             std::fs::write(data_file_path, "")?;
         }
 
-        Ok(FurTable {
-            dir: &dir.to_path_buf(),
-        })
+        Ok(FurTable { dir })
     }
 
     pub fn get_info(&self) -> std::io::Result<FurTableInfo> {
@@ -66,14 +55,14 @@ impl FurTable<'_> {
     }
 }
 
-impl FurTable<'_> {
+impl FurTable {
     pub fn add(&self, data: HashMap<&str, &str>) -> std::io::Result<()> {
         let table_info = self.get_info()?;
 
         let raw_binary = BitVec::new();
 
         for column in table_info.get_columns() {
-            let value = data.get(&column.get_name().as_str()).unwrap_or(&"");
+            let value = data.get(column.get_name().as_str()).unwrap_or(&"");
 
             let encoder = column.get_data_type().get_encoder();
 
@@ -86,7 +75,7 @@ impl FurTable<'_> {
     }
 }
 
-impl FurTable<'_> {
+impl FurTable {
     fn get_info_file_path(dir: &PathBuf) -> PathBuf {
         let mut table_info_file_path = dir.clone();
         table_info_file_path.push("fur_table.json");

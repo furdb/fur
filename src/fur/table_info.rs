@@ -2,22 +2,14 @@ use serde::{Deserialize, Serialize};
 
 use super::column::FurColumn;
 
-use bit_vec::BitVec;
-use serde_closure::{traits::Fn, Fn};
-
-#[derive(Serialize, Deserialize)]
-#[serde(bound(
-    serialize = "&'a (dyn Fn<String, Output = BitVec> + 'a): Serialize",
-    // serialize = "&dyn Fn<String, Output = BitVec>: Serialize",
-    deserialize = "&'a (dyn Fn<String, Output = BitVec> + 'a): Deserialize<'de>",
-))]
-pub struct FurTableInfo<'a> {
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct FurTableInfo {
     name: String,
     description: String,
-    columns: Vec<FurColumn<'a>>,
+    columns: Vec<FurColumn>,
 }
 
-impl FurTableInfo<'_> {
+impl FurTableInfo {
     pub fn new(
         name: String,
         description: Option<String>,
@@ -30,7 +22,7 @@ impl FurTableInfo<'_> {
         }
     }
 
-    pub fn get_columns(&self) -> &Vec<FurColumn> {
-        &self.columns
+    pub fn get_columns(&self) -> Vec<FurColumn> {
+        self.columns.clone()
     }
 }

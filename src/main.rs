@@ -6,17 +6,17 @@ use fur::{Converter, FurTable};
 use crate::fur::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTableInfo};
 
 fn main() -> Result<()> {
-    // let db = create_db()?;
+    let db = create_db()?;
 
-    // check_db(db.clone())?;
+    check_db(db.clone())?;
 
-    // let tb = create_table(db.clone())?;
+    let tb = create_table(db.clone())?;
 
-    // check_table(tb.clone())?;
+    check_table(tb.clone())?;
 
-    // create_data(tb.clone())?;
+    create_data(tb.clone())?;
 
-    converter_test()?;
+    // converter_test()?;
 
     Ok(())
 }
@@ -44,7 +44,7 @@ fn create_db() -> Result<FurDB> {
 }
 
 fn create_table(db: FurDB) -> Result<FurTable> {
-    let (person_id_column, person_fav_num_column) = create_columns();
+    let columns = create_columns();
 
     let table_name = String::from("PersonInfo");
     let table_info = FurTableInfo::new(
@@ -52,7 +52,7 @@ fn create_table(db: FurDB) -> Result<FurTable> {
         Some(String::from(
             "Information regarding some people and their favourite numbers!",
         )),
-        Some(vec![person_id_column, person_fav_num_column]),
+        Some(columns),
     );
 
     let tb = db.get_table(table_name, Some(table_info))?;
@@ -60,7 +60,7 @@ fn create_table(db: FurDB) -> Result<FurTable> {
     Ok(tb)
 }
 
-fn create_columns() -> (FurColumn, FurColumn) {
+fn create_columns() -> Vec<FurColumn> {
     let integer_data_type = create_data_type();
 
     let person_id_column = FurColumn::new(
@@ -77,7 +77,7 @@ fn create_columns() -> (FurColumn, FurColumn) {
         integer_data_type.clone(),
     );
 
-    (person_id_column, person_fav_num_column)
+    vec![person_id_column, person_fav_num_column]
 }
 
 fn create_data_type() -> FurDataType {

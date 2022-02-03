@@ -21,7 +21,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn converter_test() -> Result<()> {
+fn _converter_test() -> Result<()> {
     let converter = Converter::new(PathBuf::new(), PathBuf::new());
 
     converter.encode(String::from("9"));

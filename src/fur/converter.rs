@@ -1,4 +1,4 @@
-use bit_vec::BitVec;
+use bitvec::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{io::Result, path::PathBuf};
 
@@ -35,7 +35,7 @@ impl Converter {
         binary
     }
 
-    pub fn resize(&self, bits: BitVec, size: u128) -> Result<BitVec> {
+    pub fn resize(bits: BitVec, size: u128) -> Result<BitVec> {
         let mut resized_bits = BitVec::new();
 
         for _ in 0..(size - (bits.len() as u128)) {

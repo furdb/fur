@@ -53,7 +53,7 @@ fn create_table(db: FurDB) -> Result<FurTable> {
             "Information regarding some people and their favourite numbers!",
         )),
         Some(columns),
-    );
+    )?;
 
     let tb = db.get_table(table_name, Some(table_info))?;
 

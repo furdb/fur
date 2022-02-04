@@ -1,7 +1,8 @@
+use super::converter::Converter;
 use super::table_info::FurTableInfo;
-use bit_vec::BitVec;
+use bitvec::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, fs::OpenOptions, io::Write, path::PathBuf};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FurTable {
@@ -24,7 +25,7 @@ impl FurTable {
                 .unwrap_or("")
                 .to_string();
 
-            let table_info = &table_info.unwrap_or(FurTableInfo::new(table_name, None, None));
+            let table_info = &table_info.unwrap_or(FurTableInfo::new(table_name, None, None)?);
 
             let table_info_contents = serde_json::to_string(table_info)?;
 
@@ -58,7 +59,7 @@ impl FurTable {
     pub fn add(&self, data: HashMap<String, String>) -> std::io::Result<()> {
         let table_info = self.get_info()?;
 
-        let mut raw_binary = BitVec::new();
+        let mut raw_binary: BitVec<u8, Msb0> = BitVec::new();
 
         for column in table_info.get_columns() {
             let key = column.get_name();
@@ -69,28 +70,27 @@ impl FurTable {
 
             let column_binary = converter.encode(value.clone());
             let resized_column_binary =
-                converter.resize(column_binary.clone(), column.get_size())?;
+                Converter::resize(column_binary.clone(), column.get_size())?;
 
             raw_binary.append(&mut resized_column_binary.clone());
-
-            println!("{} {}", &column.get_name(), value);
         }
-
-        println!("Adding {:?}", raw_binary);
 
         // raw_binary should be a multiple of 8
 
-        let mut bytes: Vec<u8> = Vec::new();
+        let bytes: Vec<u8> = raw_binary.into();
 
-        for byte_start in (0..(raw_binary.len() as u128)).step_by(8) {
-            let mut current_byte: u8 = 0;
-
-            current_byte |= 0;
-
-            bytes.push(current_byte);
-        }
+        println!("Raw binary: {:?}", bytes);
 
         // --- Do something with bytes here ---
+
+        let data_file_path = Self::get_data_file_path(&self.dir);
+
+        let mut data_file = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(data_file_path)?;
+
+        data_file.write(&bytes)?;
 
         Ok(())
     }

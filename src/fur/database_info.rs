@@ -7,10 +7,10 @@ pub struct FurDBInfo {
 }
 
 impl FurDBInfo {
-    pub fn new(name: String, description: Option<String>) -> FurDBInfo {
+    pub fn new(name: &str, description: Option<&str>) -> FurDBInfo {
         FurDBInfo {
-            name,
-            description: description.unwrap_or(String::from("")),
+            name: String::from(name),
+            description: String::from(description.unwrap_or("")),
         }
     }
 }

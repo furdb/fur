@@ -8,8 +8,11 @@ pub struct FurDataType {
 }
 
 impl FurDataType {
-    pub fn new(name: String, converter: Converter) -> FurDataType {
-        FurDataType { name, converter }
+    pub fn new(name: &str, converter: Converter) -> FurDataType {
+        FurDataType {
+            name: String::from(name),
+            converter,
+        }
     }
 
     pub fn get_converter(&self) -> Converter {

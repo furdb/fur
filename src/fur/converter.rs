@@ -13,7 +13,7 @@ impl Converter {
         Converter { encoder, decoder }
     }
 
-    pub fn encode(&self, data: String) -> BitVec {
+    pub fn encode(&self, data: String, size: u128) -> Result<BitVec> {
         // -- Placeholder function for integers. Need to use stdio for other data types --
 
         let mut my_int = data.parse::<i32>().unwrap();
@@ -32,10 +32,12 @@ impl Converter {
             binary.push(bit == 1);
         }
 
-        binary
+        let resized_binary = Self::resize(binary, size)?;
+
+        Ok(resized_binary)
     }
 
-    pub fn resize(bits: BitVec, size: u128) -> Result<BitVec> {
+    fn resize(bits: BitVec, size: u128) -> Result<BitVec> {
         let mut resized_bits = BitVec::new();
 
         for _ in 0..(size - (bits.len() as u128)) {

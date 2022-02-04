@@ -21,8 +21,7 @@ impl FurDB {
                 .file_name()
                 .unwrap_or(std::ffi::OsStr::new(""))
                 .to_str()
-                .unwrap_or("")
-                .to_string();
+                .unwrap_or("");
 
             let db_info_contents =
                 serde_json::to_string(&db_info.unwrap_or(FurDBInfo::new(db_name, None)))?;

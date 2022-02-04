@@ -25,7 +25,7 @@ impl FurTable {
                 .unwrap_or("")
                 .to_string();
 
-            let table_info = &table_info.unwrap_or(FurTableInfo::new(table_name, None, None)?);
+            let table_info = &table_info.unwrap_or(FurTableInfo::new(&table_name, None, None)?);
 
             let table_info_contents = serde_json::to_string(table_info)?;
 
@@ -62,17 +62,15 @@ impl FurTable {
         let mut raw_binary: BitVec<u8, Msb0> = BitVec::new();
 
         for column in table_info.get_columns() {
-            let key = column.get_name();
+            let column_id = column.get_id();
             let default_value = String::from("");
-            let value = data.get(&key).unwrap_or(&default_value);
+            let value = data.get(&column_id).unwrap_or(&default_value);
 
             let converter = column.get_data_type().get_converter();
 
-            let column_binary = converter.encode(value.clone());
-            let resized_column_binary =
-                Converter::resize(column_binary.clone(), column.get_size())?;
+            let column_binary = converter.encode(value.clone(), column.get_size())?;
 
-            raw_binary.append(&mut resized_column_binary.clone());
+            raw_binary.append(&mut column_binary.clone());
         }
 
         // raw_binary should be a multiple of 8
@@ -80,8 +78,6 @@ impl FurTable {
         let bytes: Vec<u8> = raw_binary.into();
 
         println!("Raw binary: {:?}", bytes);
-
-        // --- Do something with bytes here ---
 
         let data_file_path = Self::get_data_file_path(&self.dir);
 

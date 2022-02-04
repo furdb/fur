@@ -1,9 +1,6 @@
 use std::{collections::HashMap, io::Result, path::PathBuf};
-
 mod fur;
-use fur::{Converter, FurTable};
-
-use crate::fur::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTableInfo};
+use fur::{Converter, FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
 
 fn main() -> Result<()> {
     let db = create_db()?;
@@ -24,7 +21,9 @@ fn main() -> Result<()> {
 fn _converter_test() -> Result<()> {
     let converter = Converter::new(PathBuf::new(), PathBuf::new());
 
-    converter.encode(String::from("9"));
+    let encoded = converter.encode(String::from("9"), 10)?;
+
+    println!("Encoded: {}", encoded);
 
     Ok(())
 }
@@ -32,10 +31,8 @@ fn _converter_test() -> Result<()> {
 fn create_db() -> Result<FurDB> {
     let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
     let db_info = FurDBInfo::new(
-        String::from("Person Data"),
-        Some(String::from(
-            "Database for storing the data regarding various people.",
-        )),
+        "Person Data",
+        Some("Database for storing the data regarding various people."),
     );
 
     let db = FurDB::new(db_path, Some(db_info))?;
@@ -48,10 +45,8 @@ fn create_table(db: FurDB) -> Result<FurTable> {
 
     let table_name = String::from("PersonInfo");
     let table_info = FurTableInfo::new(
-        String::from("Person Info"),
-        Some(String::from(
-            "Information regarding some people and their favourite numbers!",
-        )),
+        "Person Info",
+        Some("Information regarding some people and their favourite numbers!"),
         Some(columns),
     )?;
 
@@ -63,16 +58,11 @@ fn create_table(db: FurDB) -> Result<FurTable> {
 fn create_columns() -> Vec<FurColumn> {
     let integer_data_type = create_data_type();
 
-    let person_id_column = FurColumn::new(
-        String::from("id"),
-        Some(String::from("ID")),
-        5,
-        integer_data_type.clone(),
-    );
+    let person_id_column = FurColumn::new("id", Some("ID"), 5, integer_data_type.clone());
 
     let person_fav_num_column = FurColumn::new(
-        String::from("favourite_number"),
-        Some(String::from("Favourite Number")),
+        "favourite_number",
+        Some("Favourite Number"),
         11,
         integer_data_type.clone(),
     );
@@ -83,7 +73,7 @@ fn create_columns() -> Vec<FurColumn> {
 fn create_data_type() -> FurDataType {
     let converter = create_converter();
 
-    let integer_data_type = FurDataType::new(String::from("Integer"), converter.clone());
+    let integer_data_type = FurDataType::new("Integer", converter.clone());
 
     integer_data_type
 }

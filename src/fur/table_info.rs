@@ -11,8 +11,8 @@ pub struct FurTableInfo {
 
 impl FurTableInfo {
     pub fn new(
-        name: String,
-        description: Option<String>,
+        name: &str,
+        description: Option<&str>,
         columns: Option<Vec<FurColumn>>,
     ) -> std::io::Result<FurTableInfo> {
         let mut row_size: u128 = 0;
@@ -29,8 +29,8 @@ impl FurTableInfo {
         }
 
         Ok(FurTableInfo {
-            name,
-            description: description.unwrap_or(String::from("")),
+            name: String::from(name),
+            description: String::from(description.unwrap_or("")),
             columns: columns.unwrap_or(Vec::new()),
         })
     }

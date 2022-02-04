@@ -67,15 +67,30 @@ impl FurTable {
 
             let converter = column.get_data_type().get_converter();
 
-            let mut column_binary = converter.encode(value.clone());
-            raw_binary.append(&mut column_binary);
+            let column_binary = converter.encode(value.clone());
+            let resized_column_binary =
+                converter.resize(column_binary.clone(), column.get_size())?;
+
+            raw_binary.append(&mut resized_column_binary.clone());
 
             println!("{} {}", &column.get_name(), value);
         }
 
-        println!("{:?}", raw_binary);
+        println!("Adding {:?}", raw_binary);
 
-        // --- Do something with raw_binary here ---
+        // raw_binary should be a multiple of 8
+
+        let mut bytes: Vec<u8> = Vec::new();
+
+        for byte_start in (0..(raw_binary.len() as u128)).step_by(8) {
+            let mut current_byte: u8 = 0;
+
+            current_byte |= 0;
+
+            bytes.push(current_byte);
+        }
+
+        // --- Do something with bytes here ---
 
         Ok(())
     }

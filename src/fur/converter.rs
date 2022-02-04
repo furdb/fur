@@ -1,6 +1,6 @@
 use bit_vec::BitVec;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{io::Result, path::PathBuf};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Converter {
@@ -14,6 +14,8 @@ impl Converter {
     }
 
     pub fn encode(&self, data: String) -> BitVec {
+        // -- Placeholder function for integers. Need to use stdio for other data types --
+
         let mut my_int = data.parse::<i32>().unwrap();
         let mut reversed_binary: Vec<u8> = Vec::new();
 
@@ -30,13 +32,19 @@ impl Converter {
             binary.push(bit == 1);
         }
 
-        println!("{:?}", binary);
-
         binary
     }
 
-    pub fn resize(&self, bits: BitVec, size: u128) {
-        //
+    pub fn resize(&self, bits: BitVec, size: u128) -> Result<BitVec> {
+        let mut resized_bits = BitVec::new();
+
+        for _ in 0..(size - (bits.len() as u128)) {
+            resized_bits.push(false);
+        }
+
+        resized_bits.append(&mut bits.clone());
+
+        Ok(resized_bits)
     }
 
     pub fn decode(&self, bits: BitVec) -> String {

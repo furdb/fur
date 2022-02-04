@@ -29,6 +29,10 @@ impl FurColumn {
         self.name.clone()
     }
 
+    pub fn get_size(&self) -> u128 {
+        self.size
+    }
+
     pub fn get_data_type(&self) -> FurDataType {
         self.data_type.clone()
     }

@@ -1,6 +1,6 @@
 use bitvec::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::{io::Result, path::PathBuf};
+use std::path::PathBuf;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Converter {
@@ -9,12 +9,15 @@ pub struct Converter {
 }
 
 impl Converter {
-    pub fn new(encoder: PathBuf, decoder: PathBuf) -> Converter {
-        Converter { encoder, decoder }
+    pub fn new(encoder: PathBuf, decoder: PathBuf) -> std::io::Result<Converter> {
+        Ok(Converter { encoder, decoder })
     }
 
-    pub fn encode(&self, data: String, size: u128) -> Result<BitVec> {
+    pub fn encode(&self, data: &str, size: u128) -> std::io::Result<BitVec> {
         // -- Placeholder function for integers. Need to use stdio for other data types --
+        //
+        // The encoder application will take data as a string ("Hello World")
+        // and give the binary representation as a string ("100101101110101011")
 
         let mut my_int = data.parse::<i32>().unwrap();
         let mut reversed_binary: Vec<u8> = Vec::new();
@@ -37,10 +40,10 @@ impl Converter {
         Ok(resized_binary)
     }
 
-    fn resize(bits: BitVec, size: u128) -> Result<BitVec> {
+    fn resize(bits: BitVec, size: u128) -> std::io::Result<BitVec> {
         let mut resized_bits = BitVec::new();
 
-        for _ in 0..(size - (bits.len() as u128)) {
+        for _ in 0..(size - bits.len() as u128) {
             resized_bits.push(false);
         }
 
@@ -49,7 +52,7 @@ impl Converter {
         Ok(resized_bits)
     }
 
-    pub fn decode(&self, bits: BitVec) -> String {
-        String::from("")
+    pub fn decode(&self, bits: BitVec) -> std::io::Result<String> {
+        Ok(String::from(""))
     }
 }

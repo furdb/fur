@@ -1,4 +1,3 @@
-use super::converter::Converter;
 use super::table_info::FurTableInfo;
 use bitvec::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -25,7 +24,7 @@ impl FurTable {
                 .unwrap_or("")
                 .to_string();
 
-            let table_info = &table_info.unwrap_or(FurTableInfo::new(&table_name, None, None)?);
+            let table_info = &table_info.unwrap_or(FurTableInfo::new(&table_name, None)?);
 
             let table_info_contents = serde_json::to_string(table_info)?;
 
@@ -43,15 +42,11 @@ impl FurTable {
 
     pub fn get_info(&self) -> std::io::Result<FurTableInfo> {
         let table_info_file_path = Self::get_info_file_path(&self.dir);
-
         let table_info_contents_raw = std::fs::read_to_string(&table_info_file_path)?;
+        let table_info_contents = serde_json::from_str(&table_info_contents_raw)?;
+        let table_info = serde_json::from_value(table_info_contents)?;
 
-        let table_info_contents: serde_json::Value =
-            serde_json::from_str(&table_info_contents_raw)?;
-
-        let value = serde_json::from_value(table_info_contents)?;
-
-        Ok(value)
+        Ok(table_info)
     }
 }
 
@@ -63,22 +58,26 @@ impl FurTable {
 
         for column in table_info.get_columns() {
             let column_id = column.get_id();
+            let column_id = column_id.as_str();
+
             let default_value = String::from("");
-            let value = data.get(&column_id).unwrap_or(&default_value);
+            let data = data.get(column_id).unwrap_or(&default_value);
+            let data = data.as_str();
 
-            let converter = column.get_data_type().get_converter();
+            let data_type = column.get_data_type();
+            let converter = data_type.get_converter();
 
-            let column_binary = converter.encode(value.clone(), column.get_size())?;
-
-            raw_binary.append(&mut column_binary.clone());
+            let mut column_binary = converter.encode(data, column.get_size())?;
+            raw_binary.append(&mut column_binary);
         }
 
-        // raw_binary should be a multiple of 8
-
         let bytes: Vec<u8> = raw_binary.into();
+        self.write_data(&bytes)?;
 
-        println!("Raw binary: {:?}", bytes);
+        Ok(())
+    }
 
+    fn write_data(&self, bytes: &Vec<u8>) -> std::io::Result<()> {
         let data_file_path = Self::get_data_file_path(&self.dir);
 
         let mut data_file = OpenOptions::new()

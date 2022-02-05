@@ -1,7 +1,6 @@
+use super::{FurDBInfo, FurTable, FurTableInfo};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-
-use super::{FurDBInfo, FurTable, FurTableInfo};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FurDB {
@@ -23,15 +22,13 @@ impl FurDB {
                 .to_str()
                 .unwrap_or("");
 
-            let db_info_contents =
-                serde_json::to_string(&db_info.unwrap_or(FurDBInfo::new(db_name, None)))?;
+            let db_info = db_info.unwrap_or(FurDBInfo::new(db_name));
+            let db_info_contents_raw = serde_json::to_string(&db_info)?;
 
-            std::fs::write(db_info_file_path, db_info_contents)?;
+            std::fs::write(db_info_file_path, db_info_contents_raw)?;
         }
 
-        Ok(FurDB {
-            dir: dir.to_path_buf(),
-        })
+        Ok(FurDB { dir })
     }
 
     pub fn get_all_tables(&self) -> std::io::Result<Vec<String>> {
@@ -51,11 +48,11 @@ impl FurDB {
 
     pub fn get_table(
         &self,
-        table_name: String,
+        table_id: &str,
         table_info: Option<FurTableInfo>,
     ) -> std::io::Result<FurTable> {
         let mut table_dir_path = self.dir.clone();
-        table_dir_path.push(table_name);
+        table_dir_path.push(table_id);
         let tb = FurTable::new(table_dir_path, table_info)?;
 
         Ok(tb)
@@ -63,14 +60,11 @@ impl FurDB {
 
     pub fn get_info(&self) -> std::io::Result<FurDBInfo> {
         let db_info_file_path = Self::get_info_file_path(&self.dir);
-
         let db_info_contents_raw = std::fs::read_to_string(&db_info_file_path)?;
+        let db_info_contents = serde_json::from_str(&db_info_contents_raw)?;
+        let db_info = serde_json::from_value(db_info_contents)?;
 
-        let db_info_contents: serde_json::Value = serde_json::from_str(&db_info_contents_raw)?;
-
-        let value = serde_json::from_value(db_info_contents)?;
-
-        Ok(value)
+        Ok(db_info)
     }
 }
 

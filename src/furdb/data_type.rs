@@ -9,10 +9,8 @@ pub struct FurDataType {
 
 impl FurDataType {
     pub fn new(name: &str, converter: Converter) -> FurDataType {
-        FurDataType {
-            name: String::from(name),
-            converter,
-        }
+        let name = String::from(name);
+        FurDataType { name, converter }
     }
 
     pub fn get_converter(&self) -> Converter {

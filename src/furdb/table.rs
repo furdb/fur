@@ -3,7 +3,7 @@ use bitvec::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs::OpenOptions, io::Write, path::PathBuf};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FurTable {
     dir: PathBuf,
 }

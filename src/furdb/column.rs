@@ -1,7 +1,7 @@
 use super::FurDataType;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FurColumn {
     id: String,
     description: String,
@@ -20,7 +20,7 @@ impl FurColumn {
             id: String::from(id),
             description: String::from(description.unwrap_or(&id)),
             size,
-            data_type: data_type.clone(),
+            data_type: data_type,
         }
     }
 
@@ -32,7 +32,7 @@ impl FurColumn {
         self.size
     }
 
-    pub fn get_data_type(&self) -> FurDataType {
-        self.data_type.clone()
+    pub fn get_data_type(&self) -> &FurDataType {
+        &self.data_type
     }
 }

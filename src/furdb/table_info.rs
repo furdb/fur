@@ -1,7 +1,7 @@
 use super::column::FurColumn;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FurTableInfo {
     name: String,
     columns: Vec<FurColumn>,
@@ -25,14 +25,14 @@ impl FurTableInfo {
     fn is_size_valid(columns: &Vec<FurColumn>) -> bool {
         let mut row_size: u128 = 0;
 
-        for column in columns.clone() {
+        for column in columns {
             row_size += column.get_size();
         }
 
         row_size % 8 == 0
     }
 
-    pub fn get_columns(&self) -> Vec<FurColumn> {
-        self.columns.clone()
+    pub fn get_columns(&self) -> &Vec<FurColumn> {
+        &self.columns
     }
 }

@@ -5,13 +5,13 @@ use furdb::{Converter, FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTa
 fn main() -> Result<()> {
     let db = create_db()?;
 
-    check_db(db.clone())?;
+    check_db(&db)?;
 
-    let tb = create_table(db.clone())?;
+    let tb = create_table(&db)?;
 
-    check_table(tb.clone())?;
+    check_table(&tb)?;
 
-    create_data(tb.clone())?;
+    create_data(&tb)?;
 
     // converter_test()?;
 
@@ -29,7 +29,7 @@ fn _converter_test() -> Result<()> {
 }
 
 fn create_db() -> Result<FurDB> {
-    let db_path = PathBuf::from("E:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
+    let db_path = PathBuf::from("D:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
     let db_info = FurDBInfo::new("Person Data");
 
     let db = FurDB::new(db_path, Some(db_info))?;
@@ -37,7 +37,7 @@ fn create_db() -> Result<FurDB> {
     Ok(db)
 }
 
-fn create_table(db: FurDB) -> Result<FurTable> {
+fn create_table(db: &FurDB) -> Result<FurTable> {
     let columns = create_columns()?;
 
     let table_name = "PersonInfo";
@@ -78,7 +78,7 @@ fn create_converter() -> Result<Converter> {
     Converter::new(encoder, decoder)
 }
 
-fn create_data(tb: FurTable) -> Result<()> {
+fn create_data(tb: &FurTable) -> Result<()> {
     let p1_info = HashMap::from([
         (String::from("id"), String::from("7")),
         (String::from("favourite_number"), String::from("18")),
@@ -89,7 +89,7 @@ fn create_data(tb: FurTable) -> Result<()> {
     Ok(())
 }
 
-fn check_db(db: FurDB) -> Result<()> {
+fn check_db(db: &FurDB) -> Result<()> {
     let db_info = db.get_info()?;
     println!("Database Info: {:?}", db_info);
 
@@ -99,7 +99,7 @@ fn check_db(db: FurDB) -> Result<()> {
     Ok(())
 }
 
-fn check_table(tb: FurTable) -> Result<()> {
+fn check_table(tb: &FurTable) -> Result<()> {
     let tb_info = tb.get_info()?;
     println!("{:?}", tb_info);
 

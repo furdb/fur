@@ -1,7 +1,12 @@
 use super::table_info::FurTableInfo;
 use bitvec::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fs::OpenOptions, io::Write, path::PathBuf};
+use std::{
+    collections::HashMap,
+    fs::{File, OpenOptions},
+    io::{BufReader, Read, Seek, SeekFrom, Write},
+    path::PathBuf,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FurTable {
@@ -51,30 +56,83 @@ impl FurTable {
 }
 
 impl FurTable {
-    pub fn add(&self, data: HashMap<String, String>) -> std::io::Result<()> {
+    pub fn add(&self, datas: &[HashMap<&str, &str>]) -> std::io::Result<()> {
         let table_info = self.get_info()?;
 
         let mut raw_binary: BitVec<u8, Msb0> = BitVec::new();
 
-        for column in table_info.get_columns() {
-            let column_id = column.get_id();
-            let column_id = column_id.as_str();
+        for data in datas {
+            for column in table_info.get_columns() {
+                let column_id = column.get_id();
+                let column_id = column_id.as_str();
 
-            let default_value = String::from("");
-            let data = data.get(column_id).unwrap_or(&default_value);
-            let data = data.as_str();
+                let default_value = "";
+                let data = data.get(column_id).unwrap_or(&default_value);
 
-            let data_type = column.get_data_type();
-            let converter = data_type.get_converter();
+                let data_type = column.get_data_type();
+                let converter = data_type.get_converter();
 
-            let mut column_binary = converter.encode(data, column.get_size())?;
-            raw_binary.append(&mut column_binary);
+                let mut column_binary = converter.encode(data, column.get_size())?;
+                raw_binary.append(&mut column_binary);
+            }
         }
 
         let bytes: Vec<u8> = raw_binary.into();
         self.write_data(&bytes)?;
 
         Ok(())
+    }
+
+    pub fn get(&self) -> std::io::Result<Vec<Vec<HashMap<String, String>>>> {
+        let mut result = Vec::new();
+        let row_size = self.get_row_size()?;
+
+        let data_file_path = Self::get_data_file_path(&self.dir);
+        let mut data_file = BufReader::new(File::open(&data_file_path)?);
+        let metadata = std::fs::metadata(&data_file_path)?;
+        let data_file_size = metadata.len();
+
+        let table_info = self.get_info()?;
+
+        for row_start in (0..data_file_size).step_by(row_size / 8) {
+            data_file.seek(SeekFrom::Start(row_start))?;
+            let mut row_result = Vec::<HashMap<String, String>>::new();
+
+            let mut buf = vec![0u8, row_size as u8];
+            data_file.read_exact(&mut buf)?;
+            let row: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
+
+            let mut column_start = 0;
+            for column in table_info.get_columns() {
+                let column_size = column.get_size() as usize;
+                let section = &row[column_start..(column_start + column_size)];
+                let section = BitVec::from(section);
+                column_start += column_size;
+
+                let data_type = column.get_data_type();
+                let converter = data_type.get_converter();
+
+                let value = converter.decode(&section)?;
+
+                let current_pair = HashMap::from([(column.get_id(), value)]);
+                row_result.push(current_pair);
+            }
+
+            result.push(row_result);
+        }
+
+        Ok(result)
+    }
+
+    fn get_row_size(&self) -> std::io::Result<usize> {
+        let table_info = self.get_info()?;
+        let mut size = 0;
+
+        for column in table_info.get_columns() {
+            size += column.get_size();
+        }
+
+        Ok(size as usize)
     }
 
     fn write_data(&self, bytes: &Vec<u8>) -> std::io::Result<()> {

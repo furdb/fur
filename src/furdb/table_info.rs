@@ -22,7 +22,7 @@ impl FurTableInfo {
         Ok(FurTableInfo { name, columns })
     }
 
-    fn is_size_valid(columns: &Vec<FurColumn>) -> bool {
+    fn is_size_valid(columns: &[FurColumn]) -> bool {
         let mut row_size: u128 = 0;
 
         for column in columns {

@@ -1,5 +1,6 @@
 use std::{collections::HashMap, io::Result, path::PathBuf};
 mod furdb;
+use bitvec::prelude::*;
 use furdb::{Converter, FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
 
 fn main() -> Result<()> {
@@ -11,9 +12,11 @@ fn main() -> Result<()> {
 
     check_table(&tb)?;
 
-    create_data(&tb)?;
+    // add_data(&tb)?;
 
-    // converter_test()?;
+    get_data(&tb)?;
+
+    // _converter_test()?;
 
     Ok(())
 }
@@ -21,9 +24,18 @@ fn main() -> Result<()> {
 fn _converter_test() -> Result<()> {
     let converter = Converter::new(PathBuf::new(), PathBuf::new())?;
 
-    let encoded = converter.encode("9", 10)?;
+    let data = "837465892";
+    let size = 30;
+
+    println!("Data: {} | Size: {}", data, size);
+
+    let encoded: BitVec<u8, Msb0> = converter.encode(data, size)?;
 
     println!("Encoded: {}", encoded);
+
+    let decoded = converter.decode(&encoded)?;
+
+    println!("Decoded: {}", decoded);
 
     Ok(())
 }
@@ -78,13 +90,23 @@ fn create_converter() -> Result<Converter> {
     Converter::new(encoder, decoder)
 }
 
-fn create_data(tb: &FurTable) -> Result<()> {
-    let p1_info = HashMap::from([
-        (String::from("id"), String::from("7")),
-        (String::from("favourite_number"), String::from("18")),
-    ]);
+fn add_data(tb: &FurTable) -> Result<()> {
+    let p1_info = [
+        HashMap::from([("id", "7"), ("favourite_number", "18")]),
+        HashMap::from([("id", "6"), ("favourite_number", "11")]),
+    ];
 
-    tb.add(p1_info)?;
+    tb.add(&p1_info)?;
+
+    Ok(())
+}
+
+fn get_data(tb: &FurTable) -> Result<()> {
+    let result = tb.get()?;
+
+    for row in result {
+        println!("{:?}", row);
+    }
 
     Ok(())
 }

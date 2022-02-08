@@ -13,7 +13,7 @@ impl Converter {
         Ok(Converter { encoder, decoder })
     }
 
-    pub fn encode(&self, data: &str, size: u128) -> std::io::Result<BitVec> {
+    pub fn encode(&self, data: &str, size: u128) -> std::io::Result<BitVec<u8, Msb0>> {
         // -- Placeholder function for integers. Need to use stdio for other data types --
         //
         // The encoder application will take data as a string ("Hello World")
@@ -40,7 +40,7 @@ impl Converter {
         Ok(resized_binary)
     }
 
-    fn resize(bits: BitVec, size: u128) -> std::io::Result<BitVec> {
+    fn resize(bits: BitVec, size: u128) -> std::io::Result<BitVec<u8, Msb0>> {
         let mut resized_bits = BitVec::new();
 
         for _ in 0..(size - bits.len() as u128) {
@@ -52,7 +52,19 @@ impl Converter {
         Ok(resized_bits)
     }
 
-    // pub fn decode(&self, bits: BitVec) -> std::io::Result<String> {
-    //     Ok(String::from(""))
-    // }
+    pub fn decode(&self, bits: &BitVec<u8, Msb0>) -> std::io::Result<String> {
+        let mut my_int = 0;
+
+        let mut new_bits = bits.clone();
+
+        new_bits.reverse();
+
+        for (i, bit) in new_bits.iter().enumerate() {
+            if bit == true {
+                my_int += u32::pow(2, i as u32);
+            }
+        }
+
+        Ok(my_int.to_string())
+    }
 }

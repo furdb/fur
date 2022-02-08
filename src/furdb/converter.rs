@@ -52,7 +52,7 @@ impl Converter {
         Ok(resized_bits)
     }
 
-    pub fn decode(&self, bits: BitVec) -> std::io::Result<String> {
-        Ok(String::from(""))
-    }
+    // pub fn decode(&self, bits: BitVec) -> std::io::Result<String> {
+    //     Ok(String::from(""))
+    // }
 }

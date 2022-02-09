@@ -12,7 +12,9 @@ fn main() -> Result<()> {
 
     check_table(&tb)?;
 
-    // add_data(&tb)?;
+    delete_data(&tb)?;
+
+    add_data(&tb)?;
 
     get_data(&tb)?;
 
@@ -58,6 +60,11 @@ fn create_table(db: &FurDB) -> Result<FurTable> {
     let tb = db.get_table(table_name, Some(table_info))?;
 
     Ok(tb)
+}
+
+fn delete_data(tb: &FurTable) -> Result<()> {
+    tb.delete_all_data()?;
+    Ok(())
 }
 
 fn create_columns() -> Result<Vec<FurColumn>> {

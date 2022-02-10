@@ -53,6 +53,11 @@ impl Converter {
     }
 
     pub fn decode(&self, bits: &BitVec<u8, Msb0>) -> std::io::Result<String> {
+        // -- Placeholder function for integers. Need to use stdio for other data types --
+        //
+        // The encoder application will take data as a BitVec ([true, false, true, ...])
+        // and give the actual data as a string ("Hello World!")
+
         let mut my_int = 0;
 
         let mut new_bits = bits.clone();

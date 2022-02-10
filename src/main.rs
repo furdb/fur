@@ -122,7 +122,7 @@ fn check_db(db: &FurDB) -> Result<()> {
     let db_info = db.get_info()?;
     println!("Database Info: {:?}", db_info);
 
-    let db_tables = db.get_all_tables()?;
+    let db_tables = db.get_all_table_ids()?;
     println!("Database Tables: {:?}", db_tables);
 
     Ok(())

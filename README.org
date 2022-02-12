@@ -3,7 +3,7 @@
 A small and space-efficient Database Management System that allows you to allocate the size of individual data types in bits (not bytes).
 
 * Installation
-This project (along with the documentation) will be moved to [[https://crates.io][=crates.io=]] at a later date. For now, you can clone this repo with
+This project (along with the documentation) will be moved to [[https://crates.io][crates.io]] at a later date. For now, you can clone this repo with
 
 #+BEGIN_SRC bash
   git clone https://github.com/madhavan-raja/fur.git

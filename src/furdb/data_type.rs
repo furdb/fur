@@ -1,7 +1,6 @@
 use super::Converter;
-use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct FurDataType {
     name: String,
     converter: Converter,

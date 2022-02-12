@@ -1,8 +1,7 @@
 use crate::furdb::FurDBInfo;
-use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct FurDB {
     dir: PathBuf,
 }

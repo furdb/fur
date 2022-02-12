@@ -1,7 +1,6 @@
 use super::FurDataType;
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct FurColumn {
     id: String,
     description: String,

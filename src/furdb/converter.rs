@@ -1,8 +1,7 @@
 use bitvec::prelude::*;
-use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Converter {
     encoder: PathBuf,
     decoder: PathBuf,

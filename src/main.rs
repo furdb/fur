@@ -54,10 +54,10 @@ fn create_db() -> Result<FurDB> {
 fn create_table(db: &FurDB) -> Result<FurTable> {
     let columns = create_columns()?;
 
-    let table_name = "PersonInfo";
+    let table_id = "PersonInfo";
     let table_info = FurTableInfo::new("Person Info", Some(columns))?;
 
-    let tb = db.get_table(table_name, Some(table_info))?;
+    let tb = db.get_table(table_id, Some(table_info))?;
 
     Ok(tb)
 }

@@ -18,7 +18,7 @@ This project (along with the documentation) will be moved to [[https://crates.io
 and use the =FurDB= crate inside the src directory.
 
 * Usage
-As of now, this is just a Rust library. No REST API or command line interface has been implemented in this version. The only way to use it is in an existing/new Rust project.
+As of now, this is just a Rust library. No REST API or command line interface has been (or will be) implemented in this version. The only way to use it is in an existing/new Rust project.
 
 Import the crate using
 #+BEGIN_SRC rust

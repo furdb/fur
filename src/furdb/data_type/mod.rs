@@ -6,6 +6,9 @@ pub struct FurDataType {
     converter: Converter,
 }
 
+mod standard_types;
+pub use standard_types::StandardFurTypes;
+
 impl FurDataType {
     pub fn new(name: &str, converter: Converter) -> FurDataType {
         let name = String::from(name);

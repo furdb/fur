@@ -8,7 +8,7 @@ mod table_info;
 
 pub use column::FurColumn;
 pub use converter::Converter;
-pub use data_type::FurDataType;
+pub use data_type::{FurDataType, StandardFurTypes};
 pub use database::FurDB;
 pub use database_info::FurDBInfo;
 pub use table::FurTable;

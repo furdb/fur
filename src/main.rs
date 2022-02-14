@@ -1,21 +1,18 @@
 use std::{collections::HashMap, io::Result, path::PathBuf};
 mod furdb;
 use bitvec::prelude::*;
-use furdb::{Converter, FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
+use furdb::{
+    Converter, FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo, StandardFurTypes,
+};
 
 fn main() -> Result<()> {
     let db = create_db()?;
-
     check_db(&db)?;
-
     let tb = create_table(&db)?;
-
     check_table(&tb)?;
-
     delete_data(&tb)?;
-
     add_data(&tb)?;
-
+    println!();
     get_data(&tb)?;
 
     // _converter_test()?;
@@ -83,18 +80,9 @@ fn create_columns() -> Result<Vec<FurColumn>> {
 }
 
 fn create_data_type() -> Result<FurDataType> {
-    let converter = create_converter()?;
+    let unsigned_integer_data_type = StandardFurTypes::unsigned_integer()?;
 
-    let integer_data_type = FurDataType::new("Integer", converter.clone());
-
-    Ok(integer_data_type)
-}
-
-fn create_converter() -> Result<Converter> {
-    let encoder = PathBuf::from("");
-    let decoder = PathBuf::from("");
-
-    Converter::new(encoder, decoder)
+    Ok(unsigned_integer_data_type)
 }
 
 fn add_data(tb: &FurTable) -> Result<()> {
@@ -112,7 +100,15 @@ fn get_data(tb: &FurTable) -> Result<()> {
     let result = tb.get()?;
 
     for row in result {
-        println!("{:?}", row);
+        for column in tb.get_info()?.get_columns() {
+            println!(
+                "{}: {}",
+                column.get_id(),
+                row.get(&column.get_id()).unwrap()
+            );
+        }
+
+        println!();
     }
 
     Ok(())

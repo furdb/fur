@@ -1,5 +1,5 @@
 use bitvec::prelude::*;
-use std::path::PathBuf;
+use std::{error::Error, path::PathBuf};
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Converter {
@@ -8,15 +8,18 @@ pub struct Converter {
 }
 
 impl Converter {
-    pub fn new(encoder: PathBuf, decoder: PathBuf) -> std::io::Result<Converter> {
+    pub fn new(encoder: PathBuf, decoder: PathBuf) -> Result<Converter, Box<dyn Error>> {
         Ok(Converter { encoder, decoder })
     }
 
-    pub fn encode(&self, data: &str, size: u128) -> std::io::Result<BitVec<u8, Msb0>> {
+    pub fn encode(&self, data: &str, size: u128) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
         // -- Placeholder function for integers. Need to use stdio for other data types --
         //
         // The encoder application will take data as a string ("Hello World")
         // and give the binary representation as a string ("100101101110101011")
+
+        // let resp = reqwest::blocking::get("https://httpbin.org/ip")?.text()?;
+        // println!("{:#?}", resp);
 
         let mut my_int = data.parse::<i32>().unwrap();
         let mut reversed_binary: Vec<u8> = Vec::new();

@@ -1,7 +1,8 @@
 use crate::furdb::{FurDB, FurTable, FurTableInfo};
+use std::error::Error;
 
 impl FurDB {
-    pub fn get_all_table_ids(&self) -> std::io::Result<Vec<String>> {
+    pub fn get_all_table_ids(&self) -> Result<Vec<String>, Box<dyn Error>> {
         let mut tables = Vec::new();
 
         for file in std::fs::read_dir(&self.dir)? {
@@ -20,7 +21,7 @@ impl FurDB {
         &self,
         table_id: &str,
         table_info: Option<FurTableInfo>,
-    ) -> std::io::Result<FurTable> {
+    ) -> Result<FurTable, Box<dyn Error>> {
         let mut table_dir_path = self.dir.clone();
         table_dir_path.push(table_id);
         let tb = FurTable::new(table_dir_path, table_info)?;

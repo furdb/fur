@@ -1,5 +1,5 @@
 use crate::furdb::FurTableInfo;
-use std::path::PathBuf;
+use std::{error::Error, path::PathBuf};
 
 #[derive(Debug)]
 pub struct FurTable {
@@ -10,7 +10,7 @@ mod operations;
 mod utils;
 
 impl FurTable {
-    pub fn new(dir: PathBuf, table_info: Option<FurTableInfo>) -> std::io::Result<FurTable> {
+    pub fn new(dir: PathBuf, table_info: Option<FurTableInfo>) -> Result<FurTable, Box<dyn Error>> {
         Self::ensure_table_files(&dir, table_info)?;
 
         Ok(FurTable { dir })

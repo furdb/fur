@@ -2,11 +2,12 @@ use crate::furdb::FurTable;
 use bitvec::prelude::*;
 use std::{
     collections::HashMap,
+    error::Error,
     io::{BufReader, Read, Seek, SeekFrom},
 };
 
 impl FurTable {
-    pub fn add(&self, datas: &[HashMap<&str, &str>]) -> std::io::Result<()> {
+    pub fn add(&self, datas: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
         let table_info = self.get_info()?;
 
         let mut data_binary_raw: BitVec<u8, Msb0> = BitVec::new();
@@ -22,7 +23,7 @@ impl FurTable {
         Ok(())
     }
 
-    pub fn get(&self) -> std::io::Result<Vec<HashMap<String, String>>> {
+    pub fn get(&self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
         let mut result = Vec::new();
 
         let row_size = self.get_row_size()? / 8;
@@ -62,7 +63,7 @@ impl FurTable {
         Ok(result)
     }
 
-    pub fn delete_all_data(&self) -> std::io::Result<()> {
+    pub fn delete_all_data(&self) -> Result<(), Box<dyn Error>> {
         let data_file_path = Self::get_data_file_path(&self.dir);
         std::fs::write(data_file_path, "")?;
 

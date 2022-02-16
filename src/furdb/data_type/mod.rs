@@ -1,7 +1,5 @@
 use std::error::Error;
 
-use bitvec::prelude::*;
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct FurDataType {
     id: String,
@@ -12,10 +10,10 @@ mod operations;
 mod utils;
 
 impl FurDataType {
-    pub fn new(id: &str, converter: &str) -> FurDataType {
+    pub fn new(id: &str, converter: &str) -> Result<FurDataType, Box<dyn Error>> {
         let id = String::from(id);
         let converter = String::from(converter);
 
-        FurDataType { id, converter }
+        Ok(FurDataType { id, converter })
     }
 }

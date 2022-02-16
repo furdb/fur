@@ -20,7 +20,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn _converter_test() -> Result<(), Box<dyn Error>> {
     let id = "unsigned_integer";
-    let converter = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str());
+    let converter = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str())?;
 
     let data = "2";
     let size = 30;
@@ -80,7 +80,7 @@ fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
 
 fn create_data_type() -> Result<FurDataType, Box<dyn Error>> {
     let unsigned_integer_data_type =
-        FurDataType::new("unsigned_integer", "http://localhost:5000/unsigned_integer");
+        FurDataType::new("unsigned_integer", "http://localhost:5000/unsigned_integer")?;
 
     Ok(unsigned_integer_data_type)
 }

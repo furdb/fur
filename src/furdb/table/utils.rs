@@ -48,9 +48,8 @@ impl FurTable {
             let data = data.get(column_id).unwrap_or(&&"");
 
             let data_type = column.get_data_type();
-            let converter = data_type.get_converter();
 
-            let mut column_binary = converter.encode(data, column.get_size())?;
+            let mut column_binary = data_type.encode(data, column.get_size())?;
             row_binary_raw.append(&mut column_binary);
         }
 

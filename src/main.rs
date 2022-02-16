@@ -1,9 +1,7 @@
 use std::{collections::HashMap, error::Error, path::PathBuf};
 mod furdb;
 use bitvec::prelude::*;
-use furdb::{
-    Converter, FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo, StandardFurTypes,
-};
+use furdb::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let db = create_db()?;
@@ -21,9 +19,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn _converter_test() -> Result<(), Box<dyn Error>> {
-    let converter = Converter::new(PathBuf::new(), PathBuf::new())?;
+    let id = "unsigned_integer";
+    let converter = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str());
 
-    let data = "837465892";
+    let data = "2";
     let size = 30;
 
     println!("Data: {} | Size: {}", data, size);
@@ -80,7 +79,8 @@ fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
 }
 
 fn create_data_type() -> Result<FurDataType, Box<dyn Error>> {
-    let unsigned_integer_data_type = StandardFurTypes::unsigned_integer()?;
+    let unsigned_integer_data_type =
+        FurDataType::new("unsigned_integer", "http://localhost:5000/unsigned_integer");
 
     Ok(unsigned_integer_data_type)
 }

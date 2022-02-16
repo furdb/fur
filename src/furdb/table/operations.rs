@@ -50,9 +50,8 @@ impl FurTable {
                 column_start += column_size;
 
                 let data_type = column.get_data_type();
-                let converter = data_type.get_converter();
 
-                let value = converter.decode(&section)?;
+                let value = data_type.decode(&section)?;
 
                 data.insert(column.get_id(), value);
             }

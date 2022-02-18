@@ -20,18 +20,18 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn _converter_test() -> Result<(), Box<dyn Error>> {
     let id = "unsigned_integer";
-    let converter = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str())?;
+    let data_type = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str())?;
 
     let data = "2";
-    let size = 30;
+    let size = 5;
 
     println!("Data: {} | Size: {}", data, size);
 
-    let encoded: BitVec<u8, Msb0> = converter.encode(data, size)?;
+    let encoded: BitVec<u8, Msb0> = data_type.encode(data, size)?;
 
     println!("Encoded: {}", encoded);
 
-    let decoded = converter.decode(&encoded)?;
+    let decoded = data_type.decode(&encoded)?;
 
     println!("Decoded: {}", decoded);
 

@@ -27,8 +27,10 @@ impl FurTable {
         let mut result = Vec::<HashMap<String, BitVec<u8, Msb0>>>::new();
 
         let row_size = self.get_row_size()? / 8;
+
         let data_file_path = Self::get_data_file_path(&self.dir);
         let mut data_file = BufReader::new(std::fs::File::open(&data_file_path)?);
+
         let metadata = std::fs::metadata(&data_file_path)?;
         let data_file_size = metadata.len();
 

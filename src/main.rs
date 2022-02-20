@@ -97,12 +97,12 @@ fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 fn get_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
-    let result = tb.get()?;
+    let result = tb.get_raw()?;
 
     for row in result {
         for column in tb.get_info()?.get_columns() {
             println!(
-                "{}: {}",
+                "{}: {:?}",
                 column.get_id(),
                 row.get(&column.get_id()).unwrap()
             );

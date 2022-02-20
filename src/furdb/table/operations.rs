@@ -10,7 +10,7 @@ impl FurTable {
     pub fn add(&self, datas: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
         let table_info = self.get_info()?;
 
-        let mut data_binary_raw: BitVec<u8, Msb0> = BitVec::new();
+        let mut data_binary_raw = BitVec::<u8, Msb0>::new();
 
         for data in datas {
             let mut row_binary_raw = self.add_row(data, table_info.get_columns())?;
@@ -23,8 +23,8 @@ impl FurTable {
         Ok(())
     }
 
-    pub fn get(&self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
-        let mut result = Vec::new();
+    pub fn get_raw(&self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
+        let mut result = Vec::<HashMap<String, BitVec<u8, Msb0>>>::new();
 
         let row_size = self.get_row_size()? / 8;
         let data_file_path = Self::get_data_file_path(&self.dir);
@@ -36,7 +36,7 @@ impl FurTable {
 
         for row_start in (0..data_file_size).step_by(row_size) {
             data_file.seek(SeekFrom::Start(row_start))?;
-            let mut data = HashMap::<String, String>::new();
+            let mut data = HashMap::<String, BitVec<u8, Msb0>>::new();
 
             let mut buf = vec![0u8, row_size as u8];
             data_file.read_exact(&mut buf)?;
@@ -49,9 +49,29 @@ impl FurTable {
                 let section = BitVec::from(section);
                 column_start += column_size;
 
+                data.insert(column.get_id(), section);
+            }
+
+            result.push(data);
+        }
+
+        Ok(result)
+    }
+
+    pub fn get(&self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
+        let data_raw = self.get_raw()?;
+        let mut result = Vec::<HashMap<String, String>>::new();
+
+        let table_info = self.get_info()?;
+
+        for row in data_raw {
+            let mut data = HashMap::new();
+
+            for column in table_info.get_columns() {
                 let data_type = column.get_data_type();
 
-                let value = data_type.decode(&section)?;
+                let current_section = row.get(&column.get_id()).unwrap();
+                let value = data_type.decode(current_section)?;
 
                 data.insert(column.get_id(), value);
             }

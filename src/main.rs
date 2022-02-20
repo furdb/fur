@@ -19,11 +19,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn _converter_test() -> Result<(), Box<dyn Error>> {
-    let id = "unsigned_integer";
+    let id = "long_string";
     let data_type = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str())?;
 
-    let data = "2";
-    let size = 5;
+    let data = "Hello World";
+    let size = 104;
 
     println!("Data: {} | Size: {}", data, size);
 
@@ -64,7 +64,7 @@ fn delete_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
-    let integer_data_type = create_data_type()?;
+    let (long_string_data_type, integer_data_type) = create_data_types()?;
 
     let person_id_column = FurColumn::new("id", Some("ID"), 5, integer_data_type.clone());
 
@@ -75,20 +75,30 @@ fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
         integer_data_type.clone(),
     );
 
-    Ok(vec![person_id_column, person_fav_num_column])
+    let person_name_column =
+        FurColumn::new("name", Some("Name"), 40, long_string_data_type.clone());
+
+    Ok(vec![
+        person_id_column,
+        person_name_column,
+        person_fav_num_column,
+    ])
 }
 
-fn create_data_type() -> Result<FurDataType, Box<dyn Error>> {
+fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
+    let long_string_data_type =
+        FurDataType::new("long_string", "http://localhost:5000/long_string")?;
+
     let unsigned_integer_data_type =
         FurDataType::new("unsigned_integer", "http://localhost:5000/unsigned_integer")?;
 
-    Ok(unsigned_integer_data_type)
+    Ok((long_string_data_type, unsigned_integer_data_type))
 }
 
 fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
     let p1_info = [
-        HashMap::from([("id", "7"), ("favourite_number", "18")]),
-        HashMap::from([("id", "6"), ("favourite_number", "11")]),
+        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
+        HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
     ];
 
     tb.add(&p1_info)?;
@@ -97,12 +107,12 @@ fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 fn get_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
-    let result = tb.get_raw()?;
+    let result = tb.get()?;
 
     for row in result {
         for column in tb.get_info()?.get_columns() {
             println!(
-                "{}: {:?}",
+                "{}: {}",
                 column.get_id(),
                 row.get(&column.get_id()).unwrap()
             );

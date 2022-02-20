@@ -38,13 +38,15 @@ impl FurTable {
             data_file.seek(SeekFrom::Start(row_start))?;
             let mut data = HashMap::<String, BitVec<u8, Msb0>>::new();
 
-            let mut buf = vec![0u8, row_size as u8];
+            let mut buf = vec![0u8; row_size];
+
             data_file.read_exact(&mut buf)?;
             let row: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
 
             let mut column_start = 0;
             for column in table_info.get_columns() {
                 let column_size = column.get_size() as usize;
+
                 let section = &row[column_start..(column_start + column_size)];
                 let section = BitVec::from(section);
                 column_start += column_size;

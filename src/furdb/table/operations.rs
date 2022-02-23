@@ -7,23 +7,23 @@ use std::{
 };
 
 impl FurTable {
-    pub fn add(&self, datas: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
+    pub fn add(&self, rows: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
         let table_info = self.get_info()?;
 
-        let mut data_binary_raw = BitVec::<u8, Msb0>::new();
+        let mut rows_bin = BitVec::<u8, Msb0>::new();
 
-        for data in datas {
-            let mut row_binary_raw = self.add_row(data, table_info.get_columns())?;
-            data_binary_raw.append(&mut row_binary_raw);
+        for row in rows {
+            let mut row_bin = self.add_row(row, table_info.get_columns())?;
+            rows_bin.append(&mut row_bin);
         }
 
-        let bytes: Vec<u8> = data_binary_raw.into();
+        let bytes: Vec<u8> = rows_bin.into();
         self.write_data(&bytes)?;
 
         Ok(())
     }
 
-    pub fn get_raw(&self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
+    pub fn get_bin(&self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
         let mut result = Vec::<HashMap<String, BitVec<u8, Msb0>>>::new();
 
         let row_size = self.get_row_size()? / 8;
@@ -38,49 +38,49 @@ impl FurTable {
 
         for row_start in (0..data_file_size).step_by(row_size) {
             data_file.seek(SeekFrom::Start(row_start))?;
-            let mut data = HashMap::<String, BitVec<u8, Msb0>>::new();
+            let mut row = HashMap::<String, BitVec<u8, Msb0>>::new();
 
             let mut buf = vec![0u8; row_size];
 
             data_file.read_exact(&mut buf)?;
-            let row: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
+            let row_bin: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
 
             let mut column_start = 0;
             for column in table_info.get_columns() {
                 let column_size = column.get_size() as usize;
 
-                let section = &row[column_start..(column_start + column_size)];
-                let section = BitVec::from(section);
+                let data_bin = &row_bin[column_start..(column_start + column_size)];
+                let data_bin = BitVec::from(data_bin);
                 column_start += column_size;
 
-                data.insert(column.get_id(), section);
+                row.insert(column.get_id(), data_bin);
             }
 
-            result.push(data);
+            result.push(row);
         }
 
         Ok(result)
     }
 
     pub fn get(&self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
-        let data_raw = self.get_raw()?;
+        let rows_bin = self.get_bin()?;
         let mut result = Vec::<HashMap<String, String>>::new();
 
         let table_info = self.get_info()?;
 
-        for row in data_raw {
-            let mut data = HashMap::new();
+        for row_bin in rows_bin {
+            let mut row = HashMap::new();
 
             for column in table_info.get_columns() {
                 let data_type = column.get_data_type();
 
-                let current_section = row.get(&column.get_id()).unwrap();
-                let value = data_type.decode(current_section)?;
+                let data_bin = row.get(&column.get_id()).unwrap();
+                let data = data_type.decode(data_bin)?;
 
-                data.insert(column.get_id(), value);
+                row.insert(column.get_id(), data);
             }
 
-            result.push(data);
+            result.push(row);
         }
 
         Ok(result)

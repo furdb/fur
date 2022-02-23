@@ -36,24 +36,24 @@ impl FurTable {
 
     pub(super) fn add_row(
         &self,
-        data: &HashMap<&str, &str>,
+        row: &HashMap<&str, &str>,
         columns: &[FurColumn],
     ) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
-        let mut row_binary_raw = BitVec::new();
+        let mut row_bin = BitVec::new();
 
         for column in columns {
             let column_id = column.get_id();
             let column_id = column_id.as_str();
 
-            let data = data.get(column_id).unwrap_or(&&"");
+            let data = row.get(column_id).unwrap_or(&&"");
 
             let data_type = column.get_data_type();
 
-            let mut column_binary = data_type.encode(data, column.get_size())?;
-            row_binary_raw.append(&mut column_binary);
+            let mut column_bin = data_type.encode(data, column.get_size())?;
+            row_bin.append(&mut column_bin);
         }
 
-        Ok(row_binary_raw)
+        Ok(row_bin)
     }
 
     pub(super) fn get_row_size(&self) -> Result<usize, Box<dyn Error>> {

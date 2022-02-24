@@ -16,11 +16,7 @@ impl FurDataType {
         let mut binary = String::new();
 
         for bit in bits {
-            if *bit {
-                binary.push('1');
-            } else {
-                binary.push('0');
-            }
+            binary.push(if *bit { '1' } else { '0' });
         }
 
         binary

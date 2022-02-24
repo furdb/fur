@@ -74,7 +74,7 @@ impl FurTable {
             for column in table_info.get_columns() {
                 let data_type = column.get_data_type();
 
-                let data_bin = row.get(&column.get_id()).unwrap();
+                let data_bin = row_bin.get(&column.get_id()).unwrap();
                 let data = data_type.decode(data_bin)?;
 
                 row.insert(column.get_id(), data);

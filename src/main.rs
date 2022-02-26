@@ -20,7 +20,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn _converter_test() -> Result<(), Box<dyn Error>> {
     let id = "long_string";
-    let data_type = FurDataType::new(&id, format!("http://localhost:5000/{}", id).as_str())?;
+    let data_type = FurDataType::new(&id, Some(format!("http://localhost:5000/{}", id).as_str()))?;
 
     let data = "Hello World";
     let size = 104;
@@ -51,7 +51,8 @@ fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
     let columns = create_columns()?;
 
     let table_id = "PersonInfo";
-    let table_info = FurTableInfo::new("Person Info", None, Some(columns))?;
+    let table_info =
+        FurTableInfo::new("Person Info", Some("http://localhost:5000"), Some(columns))?;
 
     let tb = db.get_table(table_id, Some(table_info))?;
 
@@ -86,11 +87,9 @@ fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
 }
 
 fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
-    let long_string_data_type =
-        FurDataType::new("long_string", "http://localhost:5000/long_string")?;
+    let long_string_data_type = FurDataType::new("long_string", None)?;
 
-    let unsigned_integer_data_type =
-        FurDataType::new("unsigned_integer", "http://localhost:5000/unsigned_integer")?;
+    let unsigned_integer_data_type = FurDataType::new("unsigned_integer", None)?;
 
     Ok((long_string_data_type, unsigned_integer_data_type))
 }

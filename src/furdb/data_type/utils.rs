@@ -21,4 +21,14 @@ impl FurDataType {
 
         binary
     }
+
+    pub(super) fn get_converter(&self, converter_server: Option<String>) -> String {
+        let converter_endpoint = if self.converter_endpoint_override.is_some() {
+            self.converter_endpoint_override.clone().unwrap()
+        } else {
+            format!("{}/{}", converter_server.unwrap(), self.id)
+        };
+
+        converter_endpoint
+    }
 }

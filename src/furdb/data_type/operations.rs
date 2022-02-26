@@ -10,10 +10,10 @@ impl FurDataType {
         converter_server: Option<String>,
     ) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
         let data: String = data.into();
-        let url = format!(
-            "{}/encode?data={}&size={}",
-            self.converter_endpoint, data, size
-        );
+
+        let converter_endpoint = self.get_converter(converter_server);
+
+        let url = format!("{}/encode?data={}&size={}", converter_endpoint, data, size);
 
         let res = reqwest::blocking::get(url)?.text()?;
 
@@ -29,7 +29,9 @@ impl FurDataType {
     ) -> Result<String, Box<dyn Error>> {
         let bits = Self::bitvec_to_string(bits);
 
-        let url = format!("{}/decode?binary={}", self.converter_endpoint, bits);
+        let converter_endpoint = self.get_converter(converter_server);
+
+        let url = format!("{}/decode?binary={}", converter_endpoint, bits);
 
         let res = reqwest::blocking::get(url)?.text()?;
 

@@ -3,9 +3,17 @@ use bitvec::prelude::*;
 use std::error::Error;
 
 impl FurDataType {
-    pub fn encode(&self, data: &str, size: u128) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
+    pub fn encode(
+        &self,
+        data: &str,
+        size: u128,
+        converter_server: Option<String>,
+    ) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
         let data: String = data.into();
-        let url = format!("{}/encode?data={}&size={}", self.converter, data, size);
+        let url = format!(
+            "{}/encode?data={}&size={}",
+            self.converter_endpoint, data, size
+        );
 
         let res = reqwest::blocking::get(url)?.text()?;
 
@@ -14,10 +22,14 @@ impl FurDataType {
         Ok(binary)
     }
 
-    pub fn decode(&self, bits: &BitVec<u8, Msb0>) -> Result<String, Box<dyn Error>> {
+    pub fn decode(
+        &self,
+        bits: &BitVec<u8, Msb0>,
+        converter_server: Option<String>,
+    ) -> Result<String, Box<dyn Error>> {
         let bits = Self::bitvec_to_string(bits);
 
-        let url = format!("{}/decode?binary={}", self.converter, bits);
+        let url = format!("{}/decode?binary={}", self.converter_endpoint, bits);
 
         let res = reqwest::blocking::get(url)?.text()?;
 

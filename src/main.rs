@@ -27,11 +27,11 @@ fn _converter_test() -> Result<(), Box<dyn Error>> {
 
     println!("Data: {} | Size: {}", data, size);
 
-    let encoded: BitVec<u8, Msb0> = data_type.encode(data, size)?;
+    let encoded: BitVec<u8, Msb0> = data_type.encode(data, size, None)?;
 
     println!("Encoded: {}", encoded);
 
-    let decoded = data_type.decode(&encoded)?;
+    let decoded = data_type.decode(&encoded, None)?;
 
     println!("Decoded: {}", decoded);
 
@@ -51,7 +51,7 @@ fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
     let columns = create_columns()?;
 
     let table_id = "PersonInfo";
-    let table_info = FurTableInfo::new("Person Info", Some(columns))?;
+    let table_info = FurTableInfo::new("Person Info", None, Some(columns))?;
 
     let tb = db.get_table(table_id, Some(table_info))?;
 

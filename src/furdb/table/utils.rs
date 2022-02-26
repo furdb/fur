@@ -20,7 +20,7 @@ impl FurTable {
                 .unwrap_or("")
                 .to_string();
 
-            let table_info = &table_info.unwrap_or(FurTableInfo::new(&table_name, None)?);
+            let table_info = &table_info.unwrap_or(FurTableInfo::new(&table_name, None, None)?);
             let table_info_contents = serde_json::to_string(table_info)?;
 
             std::fs::write(table_info_file_path, table_info_contents)?;
@@ -41,6 +41,8 @@ impl FurTable {
     ) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
         let mut row_bin = BitVec::new();
 
+        let table_info = self.get_info()?;
+
         for column in columns {
             let column_id = column.get_id();
             let column_id = column_id.as_str();
@@ -49,7 +51,8 @@ impl FurTable {
 
             let data_type = column.get_data_type();
 
-            let mut column_bin = data_type.encode(data, column.get_size())?;
+            let mut column_bin =
+                data_type.encode(data, column.get_size(), table_info.get_converter_server())?;
             row_bin.append(&mut column_bin);
         }
 

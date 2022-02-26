@@ -3,12 +3,18 @@ use super::column::FurColumn;
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct FurTableInfo {
     name: String,
+    converter_server: Option<String>,
     columns: Vec<FurColumn>,
 }
 
 impl FurTableInfo {
-    pub fn new(name: &str, columns: Option<Vec<FurColumn>>) -> std::io::Result<FurTableInfo> {
+    pub fn new(
+        name: &str,
+        converter_server: Option<&str>,
+        columns: Option<Vec<FurColumn>>,
+    ) -> std::io::Result<FurTableInfo> {
         let name = String::from(name);
+        let converter_server = converter_server.map(str::to_string);
         let columns = columns.unwrap_or(Vec::new());
 
         if !Self::is_size_valid(&columns) {
@@ -18,7 +24,11 @@ impl FurTableInfo {
             ));
         }
 
-        Ok(FurTableInfo { name, columns })
+        Ok(FurTableInfo {
+            name,
+            converter_server,
+            columns,
+        })
     }
 
     fn is_size_valid(columns: &[FurColumn]) -> bool {
@@ -29,6 +39,10 @@ impl FurTableInfo {
         }
 
         row_size % 8 == 0
+    }
+
+    pub fn get_converter_server(&self) -> Option<String> {
+        self.converter_server.clone()
     }
 
     pub fn get_columns(&self) -> &Vec<FurColumn> {

@@ -23,48 +23,75 @@ impl FurTable {
         Ok(())
     }
 
-    pub fn get_bin(&self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
-        let mut result = Vec::<HashMap<String, BitVec<u8, Msb0>>>::new();
+    pub fn get_row_bin(
+        &self,
+        index: u64,
+    ) -> Result<HashMap<String, BitVec<u8, Msb0>>, Box<dyn Error>> {
+        let mut result = HashMap::<String, BitVec<u8, Msb0>>::new();
 
         let row_size = self.get_row_size()? / 8;
 
         let data_file_path = Self::get_data_file_path(&self.dir);
         let mut data_file = BufReader::new(std::fs::File::open(&data_file_path)?);
 
-        let metadata = std::fs::metadata(&data_file_path)?;
-        let data_file_size = metadata.len();
-
         let table_info = self.get_info()?;
 
-        for row_start in (0..data_file_size).step_by(row_size) {
-            data_file.seek(SeekFrom::Start(row_start))?;
-            let mut row = HashMap::<String, BitVec<u8, Msb0>>::new();
+        let row_start = index * row_size as u64;
 
-            let mut buf = vec![0u8; row_size];
+        data_file.seek(SeekFrom::Start(row_start))?;
 
-            data_file.read_exact(&mut buf)?;
-            let row_bin: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
+        let mut buf = vec![0u8; row_size];
 
-            let mut column_start = 0;
-            for column in table_info.get_columns() {
-                let column_size = column.get_size() as usize;
+        data_file.read_exact(&mut buf)?;
+        let row_bin: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
 
-                let data_bin = &row_bin[column_start..(column_start + column_size)];
-                let data_bin = BitVec::from(data_bin);
-                column_start += column_size;
+        let mut column_start = 0;
+        for column in table_info.get_columns() {
+            let column_size = column.get_size() as usize;
 
-                row.insert(column.get_id(), data_bin);
-            }
+            let data_bin = &row_bin[column_start..(column_start + column_size)];
+            let data_bin = BitVec::from(data_bin);
+            column_start += column_size;
 
-            result.push(row);
+            result.insert(column.get_id(), data_bin);
         }
 
         Ok(result)
     }
 
+    pub fn get_rows_bin(
+        &self,
+        indices: Vec<u64>,
+    ) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
+        let mut results = Vec::<HashMap<String, BitVec<u8, Msb0>>>::new();
+
+        for index in indices {
+            let result = self.get_row_bin(index)?;
+
+            results.push(result);
+        }
+
+        Ok(results)
+    }
+
+    pub fn get_bin(&self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
+        let row_size = self.get_row_size()? / 8;
+
+        let data_file_path = Self::get_data_file_path(&self.dir);
+
+        let metadata = std::fs::metadata(&data_file_path)?;
+        let data_file_size = metadata.len();
+
+        let indices: Vec<u64> = (0..data_file_size / row_size as u64).collect();
+
+        let results = self.get_rows_bin(indices)?;
+
+        Ok(results)
+    }
+
     pub fn get(&self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
         let rows_bin = self.get_bin()?;
-        let mut result = Vec::<HashMap<String, String>>::new();
+        let mut results = Vec::<HashMap<String, String>>::new();
 
         let table_info = self.get_info()?;
 
@@ -80,10 +107,10 @@ impl FurTable {
                 row.insert(column.get_id(), data);
             }
 
-            result.push(row);
+            results.push(row);
         }
 
-        Ok(result)
+        Ok(results)
     }
 
     pub fn delete_all_data(&self) -> Result<(), Box<dyn Error>> {

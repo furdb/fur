@@ -39,6 +39,8 @@ fn _converter_test() -> Result<(), Box<dyn Error>> {
 }
 
 fn create_db() -> Result<FurDB, Box<dyn Error>> {
+    println!("Creating DB...");
+
     let db_path = PathBuf::from("D:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
     let db_info = FurDBInfo::new("Person Data");
 
@@ -48,6 +50,8 @@ fn create_db() -> Result<FurDB, Box<dyn Error>> {
 }
 
 fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
+    println!("Creating table...");
+
     let columns = create_columns()?;
 
     let table_id = "PersonInfo";
@@ -60,11 +64,15 @@ fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
 }
 
 fn delete_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+    println!("Deleting data...");
+
     tb.delete_all_data()?;
     Ok(())
 }
 
 fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
+    println!("Creating columns...");
+
     let (long_string_data_type, integer_data_type) = create_data_types()?;
 
     let person_id_column = FurColumn::new("id", Some("ID"), 5, integer_data_type.clone());
@@ -87,6 +95,8 @@ fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
 }
 
 fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
+    println!("Creating data types...");
+
     let long_string_data_type = FurDataType::new("long_string", None)?;
 
     let unsigned_integer_data_type = FurDataType::new("unsigned_integer", None)?;
@@ -95,9 +105,14 @@ fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
 }
 
 fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+    println!("Adding data...");
+
     let p1_info = [
         HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
         HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
+        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
+        HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
+        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
     ];
 
     tb.add(&p1_info)?;
@@ -106,6 +121,8 @@ fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 fn get_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+    println!("Getting data...");
+
     let result = tb.get()?;
 
     for row in result {
@@ -124,6 +141,8 @@ fn get_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 fn check_db(db: &FurDB) -> Result<(), Box<dyn Error>> {
+    println!("Checking DB...");
+
     let db_info = db.get_info()?;
     println!("Database Info: {:?}", db_info);
 
@@ -134,6 +153,8 @@ fn check_db(db: &FurDB) -> Result<(), Box<dyn Error>> {
 }
 
 fn check_table(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+    println!("Checking table...");
+
     let tb_info = tb.get_info()?;
     println!("{:?}", tb_info);
 

@@ -40,6 +40,12 @@ impl FurTable {
         Ok(())
     }
 
+    pub(super) fn get_data_file_size(dir: &PathBuf) -> Result<u64, Box<dyn Error>> {
+        let data_file_metadata = std::fs::metadata(Self::get_data_file_path(&dir))?;
+        let data_file_size = data_file_metadata.len();
+        Ok(data_file_size)
+    }
+
     pub(super) fn ensure_data_file(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
         let data_file_path = Self::get_data_file_path(&dir);
         if !data_file_path.exists() {

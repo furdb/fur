@@ -7,7 +7,7 @@ use std::{
 };
 
 impl FurTable {
-    pub fn add(&self, rows: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
+    pub fn add(&mut self, rows: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
         let table_info = self.get_info()?;
 
         let mut rows_bin = BitVec::<u8, Msb0>::new();
@@ -19,6 +19,8 @@ impl FurTable {
 
         let bytes: Vec<u8> = rows_bin.into();
         self.write_data(&bytes)?;
+
+        self.data_file_size = Self::get_data_file_size(&self.dir)?;
 
         Ok(())
     }
@@ -74,12 +76,7 @@ impl FurTable {
     pub fn get_bin(&mut self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
         let row_size = self.get_row_size()? / 8;
 
-        let data_file_path = Self::get_data_file_path(&self.dir);
-
-        let metadata = std::fs::metadata(&data_file_path)?;
-        let data_file_size = metadata.len();
-
-        let indices: Vec<u64> = (0..data_file_size / row_size as u64).collect();
+        let indices: Vec<u64> = (0..self.data_file_size / row_size as u64).collect();
 
         let results = self.get_rows_bin(indices)?;
 

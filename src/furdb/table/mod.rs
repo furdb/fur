@@ -5,6 +5,7 @@ use std::{error::Error, fs::File, path::PathBuf};
 pub struct FurTable {
     dir: PathBuf,
     data_file: File,
+    data_file_size: u64,
 }
 
 mod operations;
@@ -16,8 +17,13 @@ impl FurTable {
 
         let data_file_path = Self::get_data_file_path(&dir);
         let data_file = std::fs::File::open(&data_file_path)?;
+        let data_file_size = Self::get_data_file_size(&dir)?;
 
-        Ok(FurTable { dir, data_file })
+        Ok(FurTable {
+            dir,
+            data_file,
+            data_file_size,
+        })
     }
 
     pub fn get_info(&self) -> std::io::Result<FurTableInfo> {

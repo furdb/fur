@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut tb = create_table(&db)?;
     check_table(&tb)?;
     delete_data(&tb)?;
-    add_data(&tb)?;
+    add_data(&mut tb)?;
     println!();
     get_data(&mut tb)?;
 
@@ -104,15 +104,12 @@ fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
     Ok((long_string_data_type, unsigned_integer_data_type))
 }
 
-fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Adding data...");
 
     let p1_info = [
         HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
         HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
-        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
-        HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
-        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
     ];
 
     tb.add(&p1_info)?;

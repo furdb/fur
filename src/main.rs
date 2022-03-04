@@ -6,12 +6,12 @@ use furdb::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
 fn main() -> Result<(), Box<dyn Error>> {
     let db = create_db()?;
     check_db(&db)?;
-    let tb = create_table(&db)?;
+    let mut tb = create_table(&db)?;
     check_table(&tb)?;
     delete_data(&tb)?;
     add_data(&tb)?;
     println!();
-    get_data(&tb)?;
+    get_data(&mut tb)?;
 
     // _converter_test()?;
 
@@ -120,7 +120,7 @@ fn add_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn get_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+fn get_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Getting data...");
 
     let result = tb.get()?;

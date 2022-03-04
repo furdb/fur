@@ -3,7 +3,7 @@ use bitvec::prelude::*;
 use std::{
     collections::HashMap,
     error::Error,
-    io::{BufReader, Read, Seek, SeekFrom},
+    io::{Read, Seek, SeekFrom},
 };
 
 impl FurTable {
@@ -24,25 +24,22 @@ impl FurTable {
     }
 
     pub fn get_row_bin(
-        &self,
+        &mut self,
         index: u64,
     ) -> Result<HashMap<String, BitVec<u8, Msb0>>, Box<dyn Error>> {
         let mut result = HashMap::<String, BitVec<u8, Msb0>>::new();
 
         let row_size = self.get_row_size()? / 8;
 
-        let data_file_path = Self::get_data_file_path(&self.dir);
-        let mut data_file = BufReader::new(std::fs::File::open(&data_file_path)?);
-
         let table_info = self.get_info()?;
 
         let row_start = index * row_size as u64;
 
-        data_file.seek(SeekFrom::Start(row_start))?;
+        self.data_file.seek(SeekFrom::Start(row_start))?;
 
         let mut buf = vec![0u8; row_size];
 
-        data_file.read_exact(&mut buf)?;
+        self.data_file.read_exact(&mut buf)?;
         let row_bin: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
 
         let mut column_start = 0;
@@ -60,7 +57,7 @@ impl FurTable {
     }
 
     pub fn get_rows_bin(
-        &self,
+        &mut self,
         indices: Vec<u64>,
     ) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
         let mut results = Vec::<HashMap<String, BitVec<u8, Msb0>>>::new();
@@ -74,7 +71,7 @@ impl FurTable {
         Ok(results)
     }
 
-    pub fn get_bin(&self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
+    pub fn get_bin(&mut self) -> Result<Vec<HashMap<String, BitVec<u8, Msb0>>>, Box<dyn Error>> {
         let row_size = self.get_row_size()? / 8;
 
         let data_file_path = Self::get_data_file_path(&self.dir);
@@ -89,7 +86,7 @@ impl FurTable {
         Ok(results)
     }
 
-    pub fn get(&self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
+    pub fn get(&mut self) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
         let rows_bin = self.get_bin()?;
         let mut results = Vec::<HashMap<String, String>>::new();
 

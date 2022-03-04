@@ -11,6 +11,17 @@ impl FurTable {
             std::fs::create_dir(&dir)?;
         }
 
+        Self::ensure_info_file(dir, table_info)?;
+
+        Self::ensure_data_file(dir)?;
+
+        Ok(())
+    }
+
+    pub(super) fn ensure_info_file(
+        dir: &PathBuf,
+        table_info: Option<FurTableInfo>,
+    ) -> Result<(), Box<dyn Error>> {
         let table_info_file_path = Self::get_info_file_path(&dir);
         if !table_info_file_path.exists() {
             let table_name = dir
@@ -26,11 +37,14 @@ impl FurTable {
             std::fs::write(table_info_file_path, table_info_contents)?;
         }
 
+        Ok(())
+    }
+
+    pub(super) fn ensure_data_file(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
         let data_file_path = Self::get_data_file_path(&dir);
         if !data_file_path.exists() {
             std::fs::write(data_file_path, "")?;
         }
-
         Ok(())
     }
 

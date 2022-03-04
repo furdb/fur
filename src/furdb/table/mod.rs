@@ -1,9 +1,10 @@
 use crate::furdb::FurTableInfo;
-use std::{error::Error, path::PathBuf};
+use std::{error::Error, fs::File, io::BufReader, path::PathBuf};
 
 #[derive(Debug)]
 pub struct FurTable {
     dir: PathBuf,
+    data_file: BufReader<File>,
 }
 
 mod operations;
@@ -13,7 +14,10 @@ impl FurTable {
     pub fn new(dir: PathBuf, table_info: Option<FurTableInfo>) -> Result<FurTable, Box<dyn Error>> {
         Self::ensure_table_files(&dir, table_info)?;
 
-        Ok(FurTable { dir })
+        let data_file_path = Self::get_data_file_path(&dir);
+        let data_file = BufReader::new(std::fs::File::open(&data_file_path)?);
+
+        Ok(FurTable { dir, data_file })
     }
 
     pub fn get_info(&self) -> std::io::Result<FurTableInfo> {

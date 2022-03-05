@@ -1,6 +1,6 @@
 use crate::furdb::{FurColumn, FurTable, FurTableInfo};
 use bitvec::prelude::*;
-use std::{collections::HashMap, error::Error, fs::OpenOptions, io::Write, path::PathBuf};
+use std::{collections::HashMap, error::Error, io::Write, path::PathBuf};
 
 impl FurTable {
     pub(super) fn ensure_table_files(
@@ -55,7 +55,7 @@ impl FurTable {
     }
 
     pub(super) fn add_row(
-        &self,
+        &mut self,
         row: &HashMap<&str, &str>,
         columns: &[FurColumn],
     ) -> Result<BitVec<u8, Msb0>, Box<dyn Error>> {
@@ -79,7 +79,7 @@ impl FurTable {
         Ok(row_bin)
     }
 
-    pub(super) fn get_row_size(&self) -> Result<usize, Box<dyn Error>> {
+    pub(super) fn get_row_size(&mut self) -> Result<usize, Box<dyn Error>> {
         let table_info = self.get_info()?;
         let mut size = 0;
 
@@ -90,15 +90,15 @@ impl FurTable {
         Ok(size as usize)
     }
 
-    pub(super) fn write_data(&self, bytes: &Vec<u8>) -> Result<(), Box<dyn Error>> {
-        let data_file_path = Self::get_data_file_path(&self.dir);
+    pub(super) fn write_data(&mut self, bytes: &Vec<u8>) -> Result<(), Box<dyn Error>> {
+        // let data_file_path = Self::get_data_file_path(&self.dir);
 
-        let mut data_file = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(data_file_path)?;
+        // let mut data_file = OpenOptions::new()
+        //     .write(true)
+        //     .append(true)
+        //     .open(data_file_path)?;
 
-        data_file.write(&bytes)?;
+        self.data_file.write(&bytes)?;
 
         Ok(())
     }

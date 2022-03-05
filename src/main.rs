@@ -7,7 +7,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let db = create_db()?;
     check_db(&db)?;
     let mut tb = create_table(&db)?;
-    check_table(&tb)?;
+    check_table(&mut tb)?;
     delete_data(&tb)?;
     add_data(&mut tb)?;
     println!();
@@ -149,7 +149,7 @@ fn check_db(db: &FurDB) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn check_table(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Checking table...");
 
     let tb_info = tb.get_info()?;

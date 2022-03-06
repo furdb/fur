@@ -107,12 +107,12 @@ fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
 fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Adding data...");
 
-    let p1_info = [
+    let p_info = [
         HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
         HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
     ];
 
-    tb.add(&p1_info)?;
+    tb.add(&p_info)?;
 
     Ok(())
 }

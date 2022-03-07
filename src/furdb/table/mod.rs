@@ -30,7 +30,11 @@ impl FurTable {
         let data_file_size = Self::get_data_file_size(&dir)?;
 
         let info_file_path = Self::get_info_file_path(&dir);
-        let info_file = std::fs::File::open(&info_file_path)?;
+        let info_file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .append(true)
+            .open(info_file_path)?;
 
         Ok(FurTable {
             dir,

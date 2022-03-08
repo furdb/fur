@@ -91,13 +91,6 @@ impl FurTable {
     }
 
     pub(super) fn write_data(&mut self, bytes: &Vec<u8>) -> Result<(), Box<dyn Error>> {
-        // let data_file_path = Self::get_data_file_path(&self.dir);
-
-        // let mut data_file = OpenOptions::new()
-        //     .write(true)
-        //     .append(true)
-        //     .open(data_file_path)?;
-
         self.data_file.write(&bytes)?;
 
         Ok(())

@@ -8,12 +8,10 @@ use std::{
 
 impl FurTable {
     pub fn add(&mut self, rows: &[HashMap<&str, &str>]) -> Result<(), Box<dyn Error>> {
-        let table_info = self.get_info()?;
-
         let mut rows_bin = BitVec::<u8, Msb0>::new();
 
         for row in rows {
-            let mut row_bin = self.add_row(row, table_info.get_columns())?;
+            let mut row_bin = self.add_row(row)?;
             rows_bin.append(&mut row_bin);
         }
 
@@ -33,8 +31,6 @@ impl FurTable {
 
         let row_size = self.get_row_size()? / 8;
 
-        let table_info = self.get_info()?;
-
         let row_start = index * row_size as u64;
 
         self.data_file.seek(SeekFrom::Start(row_start))?;
@@ -45,7 +41,7 @@ impl FurTable {
         let row_bin: BitVec<u8, Msb0> = BitVec::from_slice(&buf);
 
         let mut column_start = 0;
-        for column in table_info.get_columns() {
+        for column in self.table_info.get_columns() {
             let column_size = column.get_size() as usize;
 
             let data_bin = &row_bin[column_start..(column_start + column_size)];

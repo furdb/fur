@@ -13,6 +13,14 @@ impl FurTable {
         Ok(())
     }
 
+    pub(super) fn ensure_data_file(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
+        let data_file_path = Self::get_data_file_path(&dir);
+        if !data_file_path.exists() {
+            std::fs::write(data_file_path, "")?;
+        }
+        Ok(())
+    }
+
     pub(super) fn read_info_file(dir: &PathBuf) -> Result<FurTableInfo, Box<dyn Error>> {
         let table_info_file_path = Self::get_info_file_path(&dir);
         let table_info_contents_raw = std::fs::read_to_string(&table_info_file_path)?;
@@ -26,14 +34,6 @@ impl FurTable {
         let data_file_metadata = std::fs::metadata(Self::get_data_file_path(&dir))?;
         let data_file_size = data_file_metadata.len();
         Ok(data_file_size)
-    }
-
-    pub(super) fn ensure_data_file(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
-        let data_file_path = Self::get_data_file_path(&dir);
-        if !data_file_path.exists() {
-            std::fs::write(data_file_path, "")?;
-        }
-        Ok(())
     }
 
     pub(super) fn add_row(

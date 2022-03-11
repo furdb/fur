@@ -2,7 +2,6 @@ use crate::furdb::FurTableInfo;
 use std::{
     error::Error,
     fs::{File, OpenOptions},
-    io::{Read, Seek, SeekFrom},
     path::PathBuf,
 };
 

@@ -1,4 +1,4 @@
-use crate::furdb::{FurColumn, FurTable, FurTableInfo};
+use crate::furdb::{FurTable, FurTableInfo};
 use bitvec::prelude::*;
 use std::{collections::HashMap, error::Error, io::Write, path::PathBuf};
 

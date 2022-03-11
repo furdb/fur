@@ -3,43 +3,23 @@ use bitvec::prelude::*;
 use std::{collections::HashMap, error::Error, io::Write, path::PathBuf};
 
 impl FurTable {
-    pub(super) fn ensure_table_files(
-        dir: &PathBuf,
-        table_info: Option<&FurTableInfo>,
-    ) -> Result<(), Box<dyn Error>> {
+    pub(super) fn ensure_table_files(dir: &PathBuf) -> Result<(), Box<dyn Error>> {
         if !dir.exists() {
             std::fs::create_dir(&dir)?;
         }
-
-        Self::ensure_info_file(dir, table_info)?;
 
         Self::ensure_data_file(dir)?;
 
         Ok(())
     }
 
-    pub(super) fn ensure_info_file(
-        dir: &PathBuf,
-        table_info: Option<&FurTableInfo>,
-    ) -> Result<(), Box<dyn Error>> {
+    pub(super) fn read_info_file(dir: &PathBuf) -> Result<FurTableInfo, Box<dyn Error>> {
         let table_info_file_path = Self::get_info_file_path(&dir);
-        if !table_info_file_path.exists() {
-            let table_name = dir
-                .file_name()
-                .unwrap_or(std::ffi::OsStr::new(""))
-                .to_str()
-                .unwrap_or("")
-                .to_string();
+        let table_info_contents_raw = std::fs::read_to_string(&table_info_file_path)?;
+        let table_info_contents = serde_json::from_str(&table_info_contents_raw)?;
+        let table_info = serde_json::from_value(table_info_contents)?;
 
-            let default_table_info = FurTableInfo::new(&table_name, None, None)?;
-
-            let table_info = table_info.unwrap_or(&default_table_info);
-            let table_info_contents = serde_json::to_string(table_info)?;
-
-            std::fs::write(table_info_file_path, table_info_contents)?;
-        }
-
-        Ok(())
+        Ok(table_info)
     }
 
     pub(super) fn get_data_file_size(dir: &PathBuf) -> Result<u64, Box<dyn Error>> {

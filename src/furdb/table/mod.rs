@@ -29,7 +29,7 @@ impl FurTable {
 
         let data_file_size = Self::get_data_file_size(&dir)?;
 
-        let table_info = table_info.unwrap_or(Self::read_info_file(&dir)?);
+        let table_info = table_info.unwrap_or(Self::load_info(&dir)?);
 
         Ok(FurTable {
             dir,

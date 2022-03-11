@@ -18,16 +18,25 @@ impl FurTable {
         if !data_file_path.exists() {
             std::fs::write(data_file_path, "")?;
         }
+
         Ok(())
     }
 
-    pub(super) fn read_info_file(dir: &PathBuf) -> Result<FurTableInfo, Box<dyn Error>> {
+    pub(super) fn load_info(dir: &PathBuf) -> Result<FurTableInfo, Box<dyn Error>> {
         let table_info_file_path = Self::get_info_file_path(&dir);
         let table_info_contents_raw = std::fs::read_to_string(&table_info_file_path)?;
         let table_info_contents = serde_json::from_str(&table_info_contents_raw)?;
         let table_info = serde_json::from_value(table_info_contents)?;
 
         Ok(table_info)
+    }
+
+    pub(super) fn save_info(&self) -> Result<(), Box<dyn Error>> {
+        let table_info_raw = serde_json::to_string(&self.table_info)?;
+        let table_info_file_path = Self::get_info_file_path(&self.dir);
+        std::fs::write(table_info_file_path, table_info_raw)?;
+
+        Ok(())
     }
 
     pub(super) fn get_data_file_size(dir: &PathBuf) -> Result<u64, Box<dyn Error>> {

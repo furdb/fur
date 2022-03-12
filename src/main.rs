@@ -1,9 +1,14 @@
-use std::{collections::HashMap, error::Error, path::PathBuf};
-mod furdb;
+extern crate furdb;
+
 use bitvec::prelude::*;
 use furdb::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
+use std::{collections::HashMap, error::Error, path::PathBuf};
+
+use std::process::Command;
 
 fn main() -> Result<(), Box<dyn Error>> {
+    start_conversion_server()?;
+
     let db = create_db()?;
     check_db(&db)?;
     let mut tb = create_table(&db)?;
@@ -14,6 +19,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     get_data(&mut tb)?;
 
     // _converter_test()?;
+
+    Ok(())
+}
+
+fn start_conversion_server() -> Result<(), Box<dyn Error>> {
+    Command::new("cmd").args(["dir"]).output()?;
 
     Ok(())
 }

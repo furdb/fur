@@ -69,7 +69,9 @@ fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
     let table_info =
         FurTableInfo::new("Person Info", Some("http://localhost:5000"), Some(columns))?;
 
-    let tb = db.get_table(table_id, table_info)?;
+    let tb = db.get_table(table_id, Some(table_info))?;
+
+    tb.save_info()?;
 
     Ok(tb)
 }

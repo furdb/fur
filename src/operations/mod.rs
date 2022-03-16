@@ -33,7 +33,7 @@ pub fn _converter_test() -> Result<(), Box<dyn Error>> {
 pub fn create_db() -> Result<FurDB, Box<dyn Error>> {
     println!("Creating DB...");
 
-    let db_path = PathBuf::from("D:\\Home\\Repositories\\fur\\TestDBs\\PersonData");
+    let db_path = PathBuf::from("D:\\Home\\Repositories\\FurDB\\fur\\TestDBs\\PersonData");
     let db_info = FurDBInfo::new("Person Data");
 
     let db = FurDB::new(db_path, Some(db_info))?;

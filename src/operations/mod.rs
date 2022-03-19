@@ -60,7 +60,7 @@ pub fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
 pub fn delete_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
     println!("Deleting data...");
 
-    tb.delete_all_data()?;
+    tb.delete_all_rows()?;
     Ok(())
 }
 

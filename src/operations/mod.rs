@@ -114,7 +114,7 @@ pub fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
 pub fn get_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Getting data...");
 
-    let result = tb.get()?;
+    let result = tb.get_all()?;
 
     for row in result {
         for column in tb.get_info()?.get_columns() {

@@ -69,17 +69,17 @@ pub fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
 
     let (long_string_data_type, integer_data_type) = create_data_types()?;
 
-    let person_id_column = FurColumn::new("id", Some("ID"), 5, integer_data_type.clone());
+    let person_id_column = FurColumn::new("id", Some("ID"), 5, integer_data_type.clone())?;
 
     let person_fav_num_column = FurColumn::new(
         "favourite_number",
         Some("Favourite Number"),
         11,
         integer_data_type.clone(),
-    );
+    )?;
 
     let person_name_column =
-        FurColumn::new("name", Some("Name"), 40, long_string_data_type.clone());
+        FurColumn::new("name", Some("Name"), 40, long_string_data_type.clone())?;
 
     Ok(vec![
         person_id_column,

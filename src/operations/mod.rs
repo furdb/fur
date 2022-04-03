@@ -102,8 +102,8 @@ pub fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Adding data...");
 
     let p_info = [
-        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "John")]),
-        HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "Bob")]),
+        HashMap::from([("id", "7"), ("favourite_number", "18"), ("name", "Bob")]),
+        HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "John")]),
     ];
 
     tb.add(&p_info)?;
@@ -152,9 +152,11 @@ pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn test_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
-    let res = tb.generate_sortfile("Something")?;
-    println!("{:?}", res);
+pub fn test_sortfile(columns: &[FurColumn], tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+    for column in columns {
+        let sortfile_content = tb.generate_sortfile_content(column)?;
+        println!("Sortfile: {}: {:?}", column.get_id(), sortfile_content);
+    }
 
     Ok(())
 }

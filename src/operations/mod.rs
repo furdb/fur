@@ -151,3 +151,10 @@ pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+pub fn test_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+    let res = tb.generate_sortfile("Something")?;
+    println!("{:?}", res);
+
+    Ok(())
+}

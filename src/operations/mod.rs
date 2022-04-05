@@ -153,5 +153,5 @@ pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn test_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
-    tb.generate_all_sortfiles()
+    tb.generate_all_sortfile_contents()
 }

@@ -152,8 +152,6 @@ pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn test_sortfile(columns: &[FurColumn], tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
-    tb.generate_sortfile_contents(columns)?;
-
-    Ok(())
+pub fn test_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+    tb.generate_all_sortfiles()
 }

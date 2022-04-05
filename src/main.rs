@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!();
     get_data(&mut tb)?;
 
-    test_sortfile(&create_columns()?, &mut tb)?;
+    test_sortfile(&mut tb)?;
 
     // _converter_test()?;
 

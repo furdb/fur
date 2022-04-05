@@ -153,10 +153,7 @@ pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn test_sortfile(columns: &[FurColumn], tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
-    for column in columns {
-        let sortfile_content = tb.generate_sortfile_content(column)?;
-        println!("Sortfile: {}: {:?}", column.get_id(), sortfile_content);
-    }
+    tb.generate_sortfile_contents(columns)?;
 
     Ok(())
 }

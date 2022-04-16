@@ -6,8 +6,6 @@ use std::error::Error;
 use operations::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    start_conversion_server()?;
-
     let db = create_db()?;
     check_db(&db)?;
     let mut tb = create_table(&db)?;

@@ -2,14 +2,6 @@ use bitvec::prelude::*;
 use furdb::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
 use std::{collections::HashMap, error::Error, path::PathBuf};
 
-use std::process::Command;
-
-pub fn start_conversion_server() -> Result<(), Box<dyn Error>> {
-    Command::new("cmd").args(["dir"]).output()?;
-
-    Ok(())
-}
-
 pub fn _converter_test() -> Result<(), Box<dyn Error>> {
     let id = "long_string";
     let data_type = FurDataType::new(&id, Some(format!("http://localhost:5000/{}", id).as_str()))?;

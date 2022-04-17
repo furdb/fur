@@ -144,6 +144,10 @@ pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+pub fn delete_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+    tb.clear_all_sortfiles()
+}
+
 pub fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     tb.generate_all_sortfile_contents()
 }

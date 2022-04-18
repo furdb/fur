@@ -149,5 +149,5 @@ pub fn delete_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
-    tb.generate_all_sortfile_contents()
+    tb.generate_all_sortfiles()
 }

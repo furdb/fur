@@ -152,8 +152,8 @@ pub fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     tb.generate_all_sortfiles()
 }
 
-pub fn check_query(tb: &mut FurTable, column: FurColumn) -> Result<(), Box<dyn Error>> {
-    let res = tb.query(&column.get_id(), "")?;
+pub fn check_query(tb: &mut FurTable, column_id: String) -> Result<(), Box<dyn Error>> {
+    let res = tb.query(&column_id, "")?;
     println!("{:?}", res);
 
     Ok(())

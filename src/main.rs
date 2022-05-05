@@ -18,6 +18,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     delete_sortfile(&mut tb)?;
     check_sortfile(&mut tb)?;
 
+    let column_id = tb.get_info()?.get_columns()[0].get_id();
+    check_query(&mut tb, column_id)?;
+
     // _converter_test()?;
 
     Ok(())

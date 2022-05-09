@@ -21,7 +21,5 @@ fn main() -> Result<(), Box<dyn Error>> {
     let column = tb.get_info()?.get_columns()[0].clone();
     check_query(&mut tb, &column)?;
 
-    // _converter_test()?;
-
     Ok(())
 }

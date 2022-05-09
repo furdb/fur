@@ -156,6 +156,7 @@ pub fn check_query(tb: &mut FurTable, column: &FurColumn) -> Result<(), Box<dyn 
     let res = tb.query(&column, "7")?;
 
     println!("{:?}", res);
+    println!();
 
     if res.is_some() {
         let row = tb.get_row(res.unwrap())?;

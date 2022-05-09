@@ -152,9 +152,22 @@ pub fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     tb.generate_all_sortfiles()
 }
 
-pub fn check_query(tb: &mut FurTable, column_id: String) -> Result<(), Box<dyn Error>> {
-    let res = tb.query(&column_id, "")?;
+pub fn check_query(tb: &mut FurTable, column: &FurColumn) -> Result<(), Box<dyn Error>> {
+    let res = tb.query(&column, "7")?;
+
     println!("{:?}", res);
+
+    if res.is_some() {
+        let row = tb.get_row(res.unwrap())?;
+
+        for column in tb.get_info()?.get_columns() {
+            println!(
+                "{}: {}",
+                column.get_id(),
+                row.get(&column.get_id()).unwrap()
+            );
+        }
+    }
 
     Ok(())
 }

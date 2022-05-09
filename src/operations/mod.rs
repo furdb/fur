@@ -161,13 +161,19 @@ pub fn check_query(tb: &mut FurTable, column: &FurColumn) -> Result<(), Box<dyn 
     if res.is_some() {
         let row = tb.get_row(res.unwrap())?;
 
-        for column in tb.get_info()?.get_columns() {
-            println!(
-                "{}: {}",
-                column.get_id(),
-                row.get(&column.get_id()).unwrap()
-            );
-        }
+        display_entry(&tb, row)?;
+    }
+
+    Ok(())
+}
+
+pub fn display_entry(tb: &FurTable, row: HashMap<String, String>) -> Result<(), Box<dyn Error>> {
+    for column in tb.get_info()?.get_columns() {
+        println!(
+            "{}: {}",
+            column.get_id(),
+            row.get(&column.get_id()).unwrap()
+        );
     }
 
     Ok(())

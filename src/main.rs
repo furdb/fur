@@ -5,21 +5,22 @@ use std::error::Error;
 
 use operations::*;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let db = create_db()?;
-    check_db(&db)?;
-    let mut tb = create_table(&db)?;
-    check_table(&mut tb)?;
-    delete_data(&tb)?;
-    add_data(&mut tb)?;
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let db = create_db().await?;
+    check_db(&db).await?;
+    let mut tb = create_table(&db).await?;
+    check_table(&mut tb).await?;
+    delete_data(&tb).await?;
+    add_data(&mut tb).await?;
     println!();
-    get_data(&mut tb)?;
+    get_data(&mut tb).await?;
 
     delete_sortfile(&mut tb)?;
-    check_sortfile(&mut tb)?;
+    check_sortfile(&mut tb).await?;
 
     let column = tb.get_info()?.get_columns()[0].clone();
-    check_query(&mut tb, &column)?;
+    check_query(&mut tb, &column).await?;
 
     Ok(())
 }

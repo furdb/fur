@@ -1,28 +1,7 @@
-use bitvec::prelude::*;
 use furdb::{FurColumn, FurDB, FurDBInfo, FurDataType, FurTable, FurTableInfo};
 use std::{collections::HashMap, error::Error, path::PathBuf};
 
-pub fn _converter_test() -> Result<(), Box<dyn Error>> {
-    let id = "long_string";
-    let data_type = FurDataType::new(&id, Some(format!("http://localhost:5000/{}", id).as_str()))?;
-
-    let data = "Hello World";
-    let size = 104;
-
-    println!("Data: {} | Size: {}", data, size);
-
-    let encoded: BitVec<u8, Msb0> = data_type.encode(data, size, None)?;
-
-    println!("Encoded: {}", encoded);
-
-    let decoded = data_type.decode(&encoded, None)?;
-
-    println!("Decoded: {}", decoded);
-
-    Ok(())
-}
-
-pub fn create_db() -> Result<FurDB, Box<dyn Error>> {
+pub async fn create_db() -> Result<FurDB, Box<dyn Error>> {
     println!("Creating DB...");
 
     let db_path = PathBuf::from("D:\\Home\\Repositories\\FurDB\\TestDBs\\PersonData");
@@ -33,10 +12,10 @@ pub fn create_db() -> Result<FurDB, Box<dyn Error>> {
     Ok(db)
 }
 
-pub fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
+pub async fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
     println!("Creating table...");
 
-    let columns = create_columns()?;
+    let columns = create_columns().await?;
 
     let table_id = "PersonInfo";
     let table_info =
@@ -49,17 +28,17 @@ pub fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
     Ok(tb)
 }
 
-pub fn delete_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
+pub async fn delete_data(tb: &FurTable) -> Result<(), Box<dyn Error>> {
     println!("Deleting data...");
 
     tb.delete_all_rows()?;
     Ok(())
 }
 
-pub fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
+pub async fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
     println!("Creating columns...");
 
-    let (long_string_data_type, integer_data_type) = create_data_types()?;
+    let (long_string_data_type, integer_data_type) = create_data_types().await?;
 
     let person_id_column = FurColumn::new("id", Some("ID"), 5, integer_data_type.clone())?;
 
@@ -80,7 +59,7 @@ pub fn create_columns() -> Result<Vec<FurColumn>, Box<dyn Error>> {
     ])
 }
 
-pub fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
+pub async fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>> {
     println!("Creating data types...");
 
     let long_string_data_type = FurDataType::new("long_string", None)?;
@@ -90,7 +69,7 @@ pub fn create_data_types() -> Result<(FurDataType, FurDataType), Box<dyn Error>>
     Ok((long_string_data_type, unsigned_integer_data_type))
 }
 
-pub fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+pub async fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Adding data...");
 
     let p_info = [
@@ -98,18 +77,18 @@ pub fn add_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
         HashMap::from([("id", "6"), ("favourite_number", "11"), ("name", "John")]),
     ];
 
-    tb.add(&p_info)?;
+    tb.add(&p_info).await?;
 
     Ok(())
 }
 
-pub fn get_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+pub async fn get_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Getting data...");
 
-    let result = tb.get_all()?;
+    let result = tb.get_all().await?;
 
     for row in result {
-        display_entry(tb, row)?;
+        display_entry(tb, row).await?;
 
         println!();
     }
@@ -117,7 +96,7 @@ pub fn get_data(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn check_db(db: &FurDB) -> Result<(), Box<dyn Error>> {
+pub async fn check_db(db: &FurDB) -> Result<(), Box<dyn Error>> {
     println!("Checking DB...");
 
     let db_info = db.get_info()?;
@@ -129,7 +108,7 @@ pub fn check_db(db: &FurDB) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+pub async fn check_table(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     println!("Checking table...");
 
     let tb_info = tb.get_info()?;
@@ -142,26 +121,29 @@ pub fn delete_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
     tb.clear_all_sortfiles()
 }
 
-pub fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
-    tb.generate_all_sortfiles()
+pub async fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
+    tb.generate_all_sortfiles().await
 }
 
-pub fn check_query(tb: &mut FurTable, column: &FurColumn) -> Result<(), Box<dyn Error>> {
-    let res = tb.query(&column, "7")?;
+pub async fn check_query(tb: &mut FurTable, column: &FurColumn) -> Result<(), Box<dyn Error>> {
+    let res = tb.query(&column, "7").await?;
 
     println!("{:?}", res);
     println!();
 
     if res.is_some() {
-        let row = tb.get_row(res.unwrap())?;
+        let row = tb.get_row(res.unwrap()).await?;
 
-        display_entry(&tb, row)?;
+        display_entry(&tb, row).await?;
     }
 
     Ok(())
 }
 
-pub fn display_entry(tb: &FurTable, row: HashMap<String, String>) -> Result<(), Box<dyn Error>> {
+pub async fn display_entry(
+    tb: &FurTable,
+    row: HashMap<String, String>,
+) -> Result<(), Box<dyn Error>> {
     for column in tb.get_info()?.get_columns() {
         println!(
             "{}: {}",

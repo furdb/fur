@@ -126,7 +126,7 @@ pub async fn check_sortfile(tb: &mut FurTable) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn check_query(tb: &mut FurTable, column: &FurColumn) -> Result<(), Box<dyn Error>> {
-    let res = tb.query(&column, "7").await?;
+    let res = tb.query(&column, "6").await?;
 
     println!("{:?}", res);
     println!();

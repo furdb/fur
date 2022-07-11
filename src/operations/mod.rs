@@ -23,8 +23,6 @@ pub async fn create_table(db: &FurDB) -> Result<FurTable, Box<dyn Error>> {
 
     let tb = db.get_table(table_id, Some(table_info))?;
 
-    tb.save_info()?;
-
     Ok(tb)
 }
 
